@@ -16,20 +16,20 @@
       <div class="flex" style="margin-top:2rem;gap:2rem;flex-wrap:wrap;">
         <div class="flex" style="align-items:center;gap:0.5rem;">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
-          <span class="muted" style="font-size:0.875rem;">Real-time Recognition</span>
+          <span style="font-size:0.875rem;color:var(--ink);">Real-time Recognition</span>
         </div>
         <div class="flex" style="align-items:center;gap:0.5rem;">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--primary);"></div>
-          <span class="muted" style="font-size:0.875rem;">Instant Feedback</span>
+          <span style="font-size:0.875rem;color:var(--ink);">Instant Feedback</span>
         </div>
         <div class="flex" style="align-items:center;gap:0.5rem;">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
-          <span class="muted" style="font-size:0.875rem;">Progress Tracking</span>
+          <span style="font-size:0.875rem;color:var(--ink);">Progress Tracking</span>
         </div>
       </div>
 
       <div class="flex" style="margin-top:2.5rem;gap:1rem;flex-wrap:wrap;justify-content:center;">
-        <a class="btn btn-pill" href="{{ url_for('detect') }}">Start Learning →</a>
+        <a class="btn btn-pill btn-large" href="{{ url_for('detect') }}" style="font-size:1.125rem;padding:1rem 2rem;">🚀 Start Learning</a>
         <a class="btn btn-outline" href="{{ url_for('about') }}">Learn More</a>
       </div>
     </div>
@@ -92,29 +92,6 @@
   </div>
 </section>
 
-<!-- Demo Section -->
-<section class="section" style="background:var(--neutral-50);">
-  <div class="container">
-    <div class="text-center" style="margin-bottom:4rem;">
-      <h2 style="font-size:2.5rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Try It Now</h2>
-      <p class="muted" style="font-size:1.125rem;max-width:60ch;margin:0 auto;">
-        Experience our real-time gesture recognition system in action
-      </p>
-    </div>
 
-    <div class="card animate-fade-in-up">
-      <div class="text-center" style="margin-bottom:2rem;">
-        <h3 style="font-weight:800;font-size:1.5rem;color:var(--ink);margin-bottom:1rem;">Interactive Demo</h3>
-        <p class="muted">Click the button below to start your FSL learning journey with real-time feedback and guidance.</p>
-      </div>
-
-      <div class="text-center">
-        <a class="btn btn-pill" href="{{ url_for('detect') }}" style="font-size:1.125rem;padding:1rem 2rem;display:inline-block;min-width:200px;">
-          🚀 Launch FSL Learning Platform
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
 
 {% endblock %}

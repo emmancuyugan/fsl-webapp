@@ -15,8 +15,8 @@
   <header class="navbar animate-fade-in-down">
     <div class="container nav-inner">
       <div class="brand">
-        <div class="brand-logo animate-gentle-float" style="background:linear-gradient(135deg, var(--primary), var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:1.5rem;text-shadow:0 2px 4px rgba(0,0,0,0.2);">
-          🤟
+        <div class="brand-logo animate-gentle-float">
+          <img src="{{ url_for('static', filename='img/LOGO2.jpg') }}" alt="FSL Learning AI Logo" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
         </div>
         <div>
           <div class="brand-title">FSL Learning AI</div>
@@ -25,9 +25,9 @@
       </div>
       <nav class="flex animate-fade-in-up">
         <a href="{{ url_for('home') }}">HOME</a>
-        <a href="{{ url_for('detect') }}">LEARN</a>
+        <a href="{{ url_for('tutor') }}">LEARN</a>
+        <a href="{{ url_for('activity') }}">ACTIVITY</a>
         <a href="{{ url_for('about') }}">ABOUT</a>
-        <a href="#demo" class="btn btn-outline animate-subtle-pulse">Try Demo</a>
       </nav>
     </div>
   </header>
@@ -45,7 +45,8 @@
           <h4 style="color:var(--secondary);font-weight:800;margin-bottom:1rem;">Quick Links</h4>
           <div class="flex" style="justify-content:center;">
             <a href="{{ url_for('home') }}" class="animate-fade-in-left">Home</a>
-            <a href="{{ url_for('detect') }}" class="animate-fade-in-right">Learn</a>
+            <a href="{{ url_for('tutor') }}" class="animate-fade-in-right">Tutor</a>
+            <a href="{{ url_for('activity') }}" class="animate-fade-in-up">Activity</a>
             <a href="{{ url_for('about') }}" class="animate-fade-in-left">About</a>
           </div>
         </div>

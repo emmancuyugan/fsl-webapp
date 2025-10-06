@@ -17,6 +17,14 @@ def home():
 def detect():
     return render_template("detect.html")
 
+@app.route("/tutor")
+def tutor():
+    return render_template("tutor.html")
+
+@app.route("/activity")
+def activity():
+    return render_template("activity.html")
+
 @app.route("/about")
 def about():
     return render_template("about.html")

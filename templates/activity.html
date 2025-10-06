@@ -1,45 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Learn FSL - Interactive Learning Platform{% endblock %}
+{% block title %}Activity Mode - FSL Practice Platform{% endblock %}
 {% block content %}
 
 <!-- Enhanced Header Section -->
 <section class="section animate-fade-in-up">
   <div class="container text-center">
-    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Interactive FSL Learning</h1>
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Activity Mode</h1>
     <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
-      Master Filipino Sign Language with our dual-mode learning system
+      Practice Filipino Sign Language with AI-powered feedback and real-time evaluation
     </p>
   </div>
 </section>
 
 <section class="section">
-  <div class="container grid grid-2">
-    <!-- TUTOR PANEL - Enhanced -->
-    <div class="card animate-fade-in-left animate-delay-1">
+  <div class="container">
+    <!-- ACTIVITY PANEL -->
+    <div class="card animate-fade-in-up">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📚 Tutor Mode</h2>
-        <span class="pill success animate-subtle-pulse">Learn Step-by-Step</span>
-      </div>
-      <p class="muted" style="margin-bottom:2rem;">Choose a phrase to learn. Watch the video tutorial and follow the detailed steps.</p>
-
-      <div id="phraseButtons" class="grid grid-3" style="gap:0.75rem;margin-bottom:2rem;"></div>
-
-      <div class="video-wrap animate-fade-in-up animate-delay-2" style="margin-bottom:1.5rem;">
-        <video id="teachVideo" controls poster="{{ url_for('static', filename='img/logo.jpg') }}"></video>
-        <span class="badge">📖 Tutorial Video</span>
-      </div>
-
-      <div style="background:var(--neutral-50);padding:1.5rem;border-radius:var(--radius-lg);">
-        <h4 style="color:var(--secondary);margin-bottom:1rem;">📋 Learning Steps</h4>
-        <ol id="teachSteps" style="margin:0;padding-left:1.5rem;"></ol>
-      </div>
-    </div>
-
-    <!-- ACTIVITY PANEL - Enhanced -->
-    <div class="card animate-fade-in-right animate-delay-2">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🎯 Activity Mode</h2>
-        <button class="btn animate-smooth-gradient" id="nextChallenge" style="background-size:200% 200%;">🎲 Random Phrase</button>
+        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🎯 Practice & Evaluate</h2>
+        <button class="btn animate-smooth-gradient" id="nextChallenge" style="background-size:200% 200%;">🎲 New Challenge</button>
       </div>
       <p class="muted" style="margin-bottom:2rem;">Practice signing the phrase shown below using your camera, then get AI-powered feedback and guidance.</p>
 
@@ -48,13 +27,13 @@
         <div style="font-size:1.5rem;font-weight:900;color:white;" id="targetPhrase">Loading...</div>
       </div>
 
-      <div class="video-wrap animate-fade-in-up animate-delay-3" style="margin-top:1.5rem;">
+      <div class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;">
         <video id="cam" autoplay muted playsinline></video>
         <span class="badge">📹 Live Camera</span>
       </div>
 
-      <!-- Simplified button layout -->
-      <div class="activity-controls animate-fade-in-up animate-delay-4" style="margin-top:1.5rem;">
+      <!-- Activity Controls -->
+      <div class="activity-controls animate-fade-in-up" style="margin-top:1.5rem;">
         <div style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
           <button id="startCam" class="btn" style="background:var(--primary);flex:1;">🎥 Start Camera</button>
           <button id="startRec" class="btn" style="background:var(--secondary);flex:1;">▶️ Start Recording</button>
@@ -62,7 +41,7 @@
         <button id="stopRec" class="btn btn-large" style="background:var(--accent);width:100%;font-size:1.1rem;padding:1rem;">⏹️ Stop & Evaluate</button>
       </div>
 
-      <details class="animate-fade-in-up animate-delay-5" style="margin-top:1.5rem;">
+      <details class="animate-fade-in-up" style="margin-top:1.5rem;">
         <summary class="muted" style="cursor:pointer;padding:0.75rem;background:var(--neutral-50);border-radius:var(--radius);">
           🤔 No camera? Try manual input (Demo Mode)
         </summary>
@@ -77,7 +56,7 @@
 </section>
 
 <!-- Enhanced Feedback Section -->
-<section class="section animate-fade-in-up animate-delay-3" id="feedbackSec">
+<section class="section animate-fade-in-up" id="feedbackSec">
   <div class="container">
     <div class="card">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
@@ -113,17 +92,12 @@
     <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">🚀 Ready for More?</h2>
     <div class="animate-fade-in-up animate-delay-1">
       <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);">← Back to Home</a>
-      <button class="btn btn-outline" onclick="window.location.reload()" style="background:var(--accent);color:white;border-color:var(--accent);">🔄 Practice Again</button>
+      <a class="btn btn-outline" href="{{ url_for('tutor') }}" style="background:var(--secondary);color:white;border-color:var(--secondary);">📚 Try Tutor Mode</a>
     </div>
   </div>
 </section>
 
 <script>
-  const PHRASES = [];
-  const phraseButtons = document.getElementById("phraseButtons");
-  const teachVideo = document.getElementById("teachVideo");
-  const teachSteps = document.getElementById("teachSteps");
-
   const targetEl = document.getElementById("targetPhrase");
   const cam = document.getElementById("cam");
   const startCamBtn = document.getElementById("startCam");
@@ -146,13 +120,6 @@
   // init
   fetch("/api/phrases").then(r=>r.json()).then(d=>{
     d.phrases.forEach(p=>{
-      PHRASES.push(p);
-      // tutor buttons
-      const b = document.createElement("button");
-      b.className = "btn btn-outline";
-      b.textContent = p.charAt(0).toUpperCase() + p.slice(1);
-      b.onclick = () => loadTeach(p);
-      phraseButtons.appendChild(b);
       // attempt dropdown
       const opt = document.createElement("option");
       opt.value = p; opt.textContent = p;
@@ -160,58 +127,18 @@
     });
   });
 
-  // tutor loader
-  async function loadTeach(p){
-    const res = await fetch(`/api/teach?phrase=${encodeURIComponent(p)}`).then(r=>r.json());
-    teachVideo.src = res.video;
-    teachVideo.load();
-    teachSteps.innerHTML = "";
-    (res.steps || []).forEach(s=>{
-      const li=document.createElement("li"); li.textContent = s; teachSteps.appendChild(li);
-    });
-  }
-
   // random challenge
   document.getElementById("nextChallenge").onclick = async ()=>{
     const p = await fetch("/api/random").then(r=>r.json()).then(d=>d.phrase);
     target = p; targetEl.textContent = p;
-    loadTeach(p); // optional: remind with tutorial
   };
   // set an initial challenge
   document.getElementById("nextChallenge").click();
 
-  // Responsive UI improvements
-  function optimizeForDevice() {
-    // Make videos more touch-friendly on mobile devices
-    if(window.innerWidth <= 768 || 'ontouchstart' in window) {
-      document.querySelectorAll('video').forEach(video => {
-        video.style.maxHeight = '60vh';
-        video.setAttribute('playsinline', '');
-      });
-
-      // Make buttons more touch-friendly
-      document.querySelectorAll('.btn').forEach(btn => {
-        btn.style.minHeight = '48px';
-        btn.style.padding = '0.75rem 1rem';
-      });
-
-      console.log('Mobile optimizations applied');
-    }
-  }
-
-  // Initialize responsive optimizations
-  optimizeForDevice();
-  window.addEventListener('resize', optimizeForDevice);
-  window.addEventListener('orientationchange', () => setTimeout(optimizeForDevice, 100));
-
   // camera
   startCamBtn.onclick = async ()=>{
     try{
-      console.log('Camera access granted, starting video stream...');
-
-      console.log('Requesting camera access...');
       mediaStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
-      console.log('Camera access granted, starting video stream...');
       cam.srcObject = mediaStream;
     }catch(e){
       console.error('Camera error:', e);
@@ -219,9 +146,7 @@
     }
   };
 
-
-
-  // record (lightweight frame sampler for demo)
+  // record
   startRecBtn.onclick = ()=>{
     frames = [];
     if(!mediaStream){ alert("Start Camera first."); return; }
@@ -237,7 +162,7 @@
         ctx.drawImage(bmp, 0, 0, 320, 180);
         frames.push(canvas.toDataURL("image/jpeg", 0.6));
         count++;
-        if(count < 8) setTimeout(grab, 200); // ~1.6s sampling
+        if(count < 8) setTimeout(grab, 200);
       }catch(e){ console.warn(e); }
     };
     grab();
@@ -250,7 +175,7 @@
     showFeedback(res);
   };
 
-  // manual assess (no recognizer yet)
+  // manual assess
   assessManualBtn.onclick = async ()=>{
     const attempt = attemptManual.value.trim() || attemptPick.value;
     const res = await fetch("/api/assess", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ target, attempt_text: attempt }) }).then(r=>r.json());

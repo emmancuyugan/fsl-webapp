@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Tutor Mode - FSL Learning Platform{% endblock %}
+{% block content %}
+
+<!-- Enhanced Header Section -->
+<section class="section animate-fade-in-up">
+  <div class="container text-center">
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">📚 Tutor Mode</h1>
+    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
+      Learn Filipino Sign Language step-by-step with detailed video tutorials and guided instructions
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <!-- TUTOR PANEL -->
+    <div class="card animate-fade-in-up">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📚 Learn Step-by-Step</h2>
+        <span class="pill success animate-subtle-pulse">Guided Learning</span>
+      </div>
+      <p class="muted" style="margin-bottom:2rem;">Choose a phrase to learn. Watch the video tutorial and follow the detailed steps.</p>
+
+      <div id="phraseButtons" class="grid grid-3" style="gap:0.75rem;margin-bottom:2rem;"></div>
+
+      <div class="video-wrap animate-fade-in-up" style="margin-bottom:1.5rem;">
+        <video id="teachVideo" controls poster="{{ url_for('static', filename='img/logo.jpg') }}"></video>
+        <span class="badge">📖 Tutorial Video</span>
+      </div>
+
+      <div style="background:var(--neutral-50);padding:1.5rem;border-radius:var(--radius-lg);">
+        <h4 style="color:var(--secondary);margin-bottom:1rem;">📋 Learning Steps</h4>
+        <ol id="teachSteps" style="margin:0;padding-left:1.5rem;"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="section" style="background:var(--neutral-50);">
+  <div class="container text-center">
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">🚀 Ready to Practice?</h2>
+    <div class="animate-fade-in-up animate-delay-1">
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);">← Back to Home</a>
+      <a class="btn btn-outline" href="{{ url_for('activity') }}" style="background:var(--accent);color:white;border-color:var(--accent);">🎯 Try Activity Mode</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const PHRASES = [];
+  const phraseButtons = document.getElementById("phraseButtons");
+  const teachVideo = document.getElementById("teachVideo");
+  const teachSteps = document.getElementById("teachSteps");
+
+  // init
+  fetch("/api/phrases").then(r=>r.json()).then(d=>{
+    d.phrases.forEach(p=>{
+      PHRASES.push(p);
+      // tutor buttons
+      const b = document.createElement("button");
+      b.className = "btn btn-outline";
+      b.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+      b.onclick = () => loadTeach(p);
+      phraseButtons.appendChild(b);
+    });
+  });
+
+  // tutor loader
+  async function loadTeach(p){
+    const res = await fetch(`/api/teach?phrase=${encodeURIComponent(p)}`).then(r=>r.json());
+    teachVideo.src = res.video;
+    teachVideo.load();
+    teachSteps.innerHTML = "";
+    (res.steps || []).forEach(s=>{
+      const li=document.createElement("li"); li.textContent = s; teachSteps.appendChild(li);
+    });
+  }
+
+  // Load first phrase by default
+  fetch("/api/phrases").then(r=>r.json()).then(d=>{
+    if(d.phrases && d.phrases.length > 0){
+      loadTeach(d.phrases[0]);
+    }
+  });
+</script>
+
+{% endblock %}
