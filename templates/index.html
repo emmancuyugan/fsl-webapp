@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Home – FSL Learning{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="animate-fade-in-up">
+      <h1 class="h1">Real-time FSL Learning with AI-Powered Feedback</h1>
+      <p class="muted">
+        Experience revolutionary Filipino Sign Language learning with our advanced LSTM-based recognition system.
+        Get <strong>instant visual feedback</strong>, <strong>corrective guidance</strong>, and
+        <strong>progressive skill development</strong> through our intelligent learning platform.
+      </p>
+
+      <!-- Feature highlights -->
+      <div class="flex" style="margin-top:2rem;gap:2rem;flex-wrap:wrap;">
+        <div class="flex" style="align-items:center;gap:0.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
+          <span class="muted" style="font-size:0.875rem;">Real-time Recognition</span>
+        </div>
+        <div class="flex" style="align-items:center;gap:0.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--primary);"></div>
+          <span class="muted" style="font-size:0.875rem;">Instant Feedback</span>
+        </div>
+        <div class="flex" style="align-items:center;gap:0.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
+          <span class="muted" style="font-size:0.875rem;">Progress Tracking</span>
+        </div>
+      </div>
+
+      <div class="flex" style="margin-top:2.5rem;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <a class="btn btn-pill" href="{{ url_for('detect') }}">Start Learning →</a>
+        <a class="btn btn-outline" href="{{ url_for('about') }}">Learn More</a>
+      </div>
+    </div>
+
+    <div class="card animate-fade-in-up animate-delay-2">
+      <div style="font-weight:700;margin-bottom:1.5rem;color:var(--ink);font-size:1.125rem;text-align:center;">Live Learning Preview</div>
+
+      <!-- Enhanced Feature Grid -->
+      <div class="grid" style="grid-template-columns: repeat(2, 1fr);gap:1rem;margin-bottom:2rem;">
+        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--primary), var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
+          🤟 Gesture<br>Detection
+        </div>
+        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--secondary), var(--secondary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
+          📹 Real-time<br>Analysis
+        </div>
+        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--accent), var(--accent-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
+          ✅ Accuracy<br>Scoring
+        </div>
+        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--neutral-600), var(--neutral-800));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
+          🎯 Corrective<br>Guidance
+        </div>
+      </div>
+
+      <div class="text-center">
+        <div class="pill success animate-pulse">● AI Processing Active</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:4rem;">
+      <h2 style="font-size:2.5rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Why Choose Our Platform?</h2>
+      <p class="muted" style="font-size:1.125rem;max-width:60ch;margin:0 auto;">
+        Advanced technology meets accessibility to create the most effective FSL learning experience
+      </p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card animate-fade-in-up text-center">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, var(--primary), var(--primary-light));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;">🤖</div>
+        <h3 style="font-weight:800;font-size:1.25rem;color:var(--ink);margin-bottom:1rem;">AI-Powered Recognition</h3>
+        <p class="muted">Advanced LSTM neural networks provide accurate, real-time gesture recognition with continuous learning capabilities.</p>
+      </div>
+
+      <div class="card animate-fade-in-up text-center" style="animation-delay:0.1s;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, var(--secondary), var(--secondary-light));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;">📚</div>
+        <h3 style="font-weight:800;font-size:1.25rem;color:var(--ink);margin-bottom:1rem;">Interactive Learning</h3>
+        <p class="muted">Dual-mode system with tutor mode for guided learning and activity mode for practical application and testing.</p>
+      </div>
+
+      <div class="card animate-fade-in-up text-center" style="animation-delay:0.2s;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, var(--accent), var(--accent-light));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;">📈</div>
+        <h3 style="font-weight:800;font-size:1.25rem;color:var(--ink);margin-bottom:1rem;">Progress Analytics</h3>
+        <p class="muted">Comprehensive tracking and analytics help you understand your learning journey and identify areas for improvement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Demo Section -->
+<section class="section" style="background:var(--neutral-50);">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:4rem;">
+      <h2 style="font-size:2.5rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Try It Now</h2>
+      <p class="muted" style="font-size:1.125rem;max-width:60ch;margin:0 auto;">
+        Experience our real-time gesture recognition system in action
+      </p>
+    </div>
+
+    <div class="card animate-fade-in-up">
+      <div class="text-center" style="margin-bottom:2rem;">
+        <h3 style="font-weight:800;font-size:1.5rem;color:var(--ink);margin-bottom:1rem;">Interactive Demo</h3>
+        <p class="muted">Click the button below to start your FSL learning journey with real-time feedback and guidance.</p>
+      </div>
+
+      <div class="text-center">
+        <a class="btn btn-pill" href="{{ url_for('detect') }}" style="font-size:1.125rem;padding:1rem 2rem;display:inline-block;min-width:200px;">
+          🚀 Launch FSL Learning Platform
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

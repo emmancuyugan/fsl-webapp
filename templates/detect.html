@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}Learn FSL - Interactive Learning Platform{% endblock %}
+{% block content %}
+
+<!-- Enhanced Header Section -->
+<section class="section animate-fade-in-up">
+  <div class="container text-center">
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Interactive FSL Learning</h1>
+    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
+      Master Filipino Sign Language with our dual-mode learning system
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container grid grid-2">
+    <!-- TUTOR PANEL - Enhanced -->
+    <div class="card animate-fade-in-left animate-delay-1">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📚 Tutor Mode</h2>
+        <span class="pill success animate-subtle-pulse">Learn Step-by-Step</span>
+      </div>
+      <p class="muted" style="margin-bottom:2rem;">Choose a phrase to learn. Watch the video tutorial and follow the detailed steps.</p>
+
+      <div id="phraseButtons" class="grid grid-3" style="gap:0.75rem;margin-bottom:2rem;"></div>
+
+      <div class="video-wrap animate-fade-in-up animate-delay-2" style="margin-bottom:1.5rem;">
+        <video id="teachVideo" controls poster="{{ url_for('static', filename='img/logo.jpg') }}"></video>
+        <span class="badge">📖 Tutorial Video</span>
+      </div>
+
+      <div style="background:var(--neutral-50);padding:1.5rem;border-radius:var(--radius-lg);">
+        <h4 style="color:var(--secondary);margin-bottom:1rem;">📋 Learning Steps</h4>
+        <ol id="teachSteps" style="margin:0;padding-left:1.5rem;"></ol>
+      </div>
+    </div>
+
+    <!-- ACTIVITY PANEL - Enhanced -->
+    <div class="card animate-fade-in-right animate-delay-2">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🎯 Activity Mode</h2>
+        <button class="btn animate-smooth-gradient" id="nextChallenge" style="background-size:200% 200%;">🎲 Random Phrase</button>
+      </div>
+      <p class="muted" style="margin-bottom:2rem;">Practice signing the phrase shown below using your camera, then get AI-powered feedback.</p>
+
+      <div class="card animate-subtle-pulse" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;text-align:center;padding:2rem;">
+        <div style="font-size:0.875rem;opacity:0.9;">Target Phrase:</div>
+        <div style="font-size:1.5rem;font-weight:900;" id="targetPhrase">Loading...</div>
+      </div>
+
+      <div class="video-wrap animate-fade-in-up animate-delay-3" style="margin-top:1.5rem;">
+        <video id="cam" autoplay muted playsinline></video>
+        <span class="badge">📹 Live Camera</span>
+      </div>
+
+      <div class="grid grid-3 animate-fade-in-up animate-delay-4" style="margin-top:1.5rem;gap:0.75rem;">
+        <button id="startCam" class="btn" style="background:var(--primary);">🎥 Start Camera</button>
+        <button id="startRec" class="btn" style="background:var(--secondary);">▶️ Start Recording</button>
+        <button id="stopRec" class="btn" style="background:var(--accent);">⏹️ Stop & Evaluate</button>
+      </div>
+
+      <!-- Mobile-optimized button layout -->
+      <div class="btn-mobile-container" style="display:none;margin-top:1rem;">
+        <div style="display:flex;gap:0.5rem;">
+          <button id="startCamMobile" class="btn" style="background:var(--primary);flex:1;">🎥 Camera</button>
+          <button id="startRecMobile" class="btn" style="background:var(--secondary);flex:1;">▶️ Record</button>
+        </div>
+        <div style="margin-top:0.5rem;">
+          <button id="stopRecMobile" class="btn" style="background:var(--accent);width:100%;">⏹️ Stop & Evaluate</button>
+        </div>
+      </div>
+
+      <details class="animate-fade-in-up animate-delay-5" style="margin-top:1.5rem;">
+        <summary class="muted" style="cursor:pointer;padding:0.75rem;background:var(--neutral-50);border-radius:var(--radius);">
+          🤔 No camera? Try manual input (Demo Mode)
+        </summary>
+        <div class="grid grid-3 animate-fade-in-down" style="margin-top:1rem;gap:0.75rem;">
+          <select id="attemptPick" style="padding:0.75rem;border-radius:var(--radius);border:2px solid var(--neutral-200);"></select>
+          <input id="attemptManual" placeholder="Type your attempt..." style="padding:0.75rem;border-radius:var(--radius);border:2px solid var(--neutral-200);" />
+          <button class="btn" id="assessManual" style="background:var(--neutral-700);">✨ Assess</button>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Enhanced Feedback Section -->
+<section class="section animate-fade-in-up animate-delay-3" id="feedbackSec">
+  <div class="container">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--accent);"></div>
+        <h2 style="margin:0;color:var(--accent);font-size:1.75rem;">📊 Performance Feedback</h2>
+      </div>
+
+      <div id="feedbackBox" class="feedback animate-subtle-pulse" style="display:none;margin-bottom:2rem;"></div>
+
+      <div id="reteach" class="animate-fade-in-up" style="display:none;">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+          <div style="width:12px;height:12px;border-radius:50%;background:var(--success);"></div>
+          <h3 style="margin:0;color:var(--success);">🎓 Learn the Correct Sign</h3>
+        </div>
+
+        <div class="video-wrap animate-fade-in-left">
+          <video id="reteachVideo" controls></video>
+          <span class="badge success animate-pulse">✅ Correct Technique</span>
+        </div>
+
+        <div style="background:var(--success);background:linear-gradient(135deg, var(--success), var(--secondary-light));color:white;padding:1.5rem;border-radius:var(--radius-lg);margin-top:1.5rem;">
+          <h4 style="margin-bottom:1rem;">📝 Correct Steps:</h4>
+          <ol id="reteachSteps" style="margin:0;padding-left:1.5rem;"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="section" style="background:var(--neutral-50);">
+  <div class="container text-center">
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">🚀 Ready for More?</h2>
+    <div class="animate-fade-in-up animate-delay-1">
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);">← Back to Home</a>
+      <button class="btn btn-outline" onclick="window.location.reload()" style="background:var(--accent);color:white;border-color:var(--accent);">🔄 Practice Again</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const PHRASES = [];
+  const phraseButtons = document.getElementById("phraseButtons");
+  const teachVideo = document.getElementById("teachVideo");
+  const teachSteps = document.getElementById("teachSteps");
+
+  const targetEl = document.getElementById("targetPhrase");
+  const cam = document.getElementById("cam");
+  const startCamBtn = document.getElementById("startCam");
+  const startRecBtn = document.getElementById("startRec");
+  const stopRecBtn = document.getElementById("stopRec");
+
+  const attemptPick = document.getElementById("attemptPick");
+  const attemptManual = document.getElementById("attemptManual");
+  const assessManualBtn = document.getElementById("assessManual");
+
+  const feedbackBox = document.getElementById("feedbackBox");
+  const reteach = document.getElementById("reteach");
+  const reteachVideo = document.getElementById("reteachVideo");
+  const reteachSteps = document.getElementById("reteachSteps");
+
+  let mediaStream = null;
+  let frames = [];
+  let target = "";
+
+  // init
+  fetch("/api/phrases").then(r=>r.json()).then(d=>{
+    d.phrases.forEach(p=>{
+      PHRASES.push(p);
+      // tutor buttons
+      const b = document.createElement("button");
+      b.className = "btn btn-outline";
+      b.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+      b.onclick = () => loadTeach(p);
+      phraseButtons.appendChild(b);
+      // attempt dropdown
+      const opt = document.createElement("option");
+      opt.value = p; opt.textContent = p;
+      attemptPick.appendChild(opt);
+    });
+  });
+
+  // tutor loader
+  async function loadTeach(p){
+    const res = await fetch(`/api/teach?phrase=${encodeURIComponent(p)}`).then(r=>r.json());
+    teachVideo.src = res.video;
+    teachVideo.load();
+    teachSteps.innerHTML = "";
+    (res.steps || []).forEach(s=>{
+      const li=document.createElement("li"); li.textContent = s; teachSteps.appendChild(li);
+    });
+  }
+
+  // random challenge
+  document.getElementById("nextChallenge").onclick = async ()=>{
+    const p = await fetch("/api/random").then(r=>r.json()).then(d=>d.phrase);
+    target = p; targetEl.textContent = p;
+    loadTeach(p); // optional: remind with tutorial
+  };
+  // set an initial challenge
+  document.getElementById("nextChallenge").click();
+
+  // Mobile device detection and responsive UI
+  function detectMobile() {
+    const isMobile = window.innerWidth <= 768 ||
+                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                    'ontouchstart' in window;
+
+    const desktopButtons = document.querySelector('.grid.grid-3');
+    const mobileButtons = document.querySelector('.btn-mobile-container');
+
+    if(isMobile) {
+      desktopButtons.style.display = 'none';
+      mobileButtons.style.display = 'block';
+
+      // Connect mobile buttons to same functions
+      document.getElementById('startCamMobile').onclick = startCamBtn.onclick;
+      document.getElementById('startRecMobile').onclick = startRecBtn.onclick;
+      document.getElementById('stopRecMobile').onclick = stopRecBtn.onclick;
+
+      // Make videos more touch-friendly
+      document.querySelectorAll('video').forEach(video => {
+        video.style.maxHeight = '60vh';
+        video.setAttribute('playsinline', '');
+      });
+
+      console.log('Mobile interface activated');
+    } else {
+      desktopButtons.style.display = 'grid';
+      mobileButtons.style.display = 'none';
+      console.log('Desktop interface activated');
+    }
+  }
+
+  // Initialize mobile detection
+  detectMobile();
+  window.addEventListener('resize', detectMobile);
+  window.addEventListener('orientationchange', () => setTimeout(detectMobile, 100));
+
+  // camera
+  startCamBtn.onclick = async ()=>{
+    try{
+      console.log('Camera access granted, starting video stream...');
+
+      console.log('Requesting camera access...');
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+      console.log('Camera access granted, starting video stream...');
+      cam.srcObject = mediaStream;
+    }catch(e){
+      console.error('Camera error:', e);
+      alert("Could not access camera: " + e.message);
+    }
+  };
+
+
+
+  // record (lightweight frame sampler for demo)
+  startRecBtn.onclick = ()=>{
+    frames = [];
+    if(!mediaStream){ alert("Start Camera first."); return; }
+    const track = mediaStream.getVideoTracks()[0];
+    const imageCapture = new ImageCapture(track);
+    let count = 0;
+    const grab = async ()=>{
+      try{
+        const bmp = await imageCapture.grabFrame();
+        const canvas = document.createElement("canvas");
+        canvas.width = 320; canvas.height = 180;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(bmp, 0, 0, 320, 180);
+        frames.push(canvas.toDataURL("image/jpeg", 0.6));
+        count++;
+        if(count < 8) setTimeout(grab, 200); // ~1.6s sampling
+      }catch(e){ console.warn(e); }
+    };
+    grab();
+  };
+
+  // stop & evaluate
+  stopRecBtn.onclick = async ()=>{
+    const body = { target, frames };
+    const res = await fetch("/api/assess", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) }).then(r=>r.json());
+    showFeedback(res);
+  };
+
+  // manual assess (no recognizer yet)
+  assessManualBtn.onclick = async ()=>{
+    const attempt = attemptManual.value.trim() || attemptPick.value;
+    const res = await fetch("/api/assess", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ target, attempt_text: attempt }) }).then(r=>r.json());
+    showFeedback(res);
+  };
+
+  function showFeedback(res){
+    feedbackBox.style.display = "block";
+    if(res.correct){
+      feedbackBox.className = "feedback success";
+      feedbackBox.innerHTML = `✅ <b>Correct!</b> Score: <span class="kpi">${(res.score*100).toFixed(0)}%</span>`;
+      reteach.style.display = "none";
+    }else{
+      feedbackBox.className = "feedback danger";
+      feedbackBox.innerHTML = `❌ <b>Incorrect.</b> Target: <b>${res.target}</b> — Score: <span class="kpi">${(res.score*100).toFixed(0)}%</span><br>${(res.hints||[]).join(" ")}`;
+      // show teaching for the right sign
+      reteach.style.display = "block";
+      reteachVideo.src = (res.teach && res.teach.video) || "/static/video/sample.mp4";
+      reteachVideo.load();
+      reteachSteps.innerHTML = "";
+      (res.teach && res.teach.steps || []).forEach(s=>{
+        const li=document.createElement("li"); li.textContent = s; reteachSteps.appendChild(li);
+      });
+    }
+    scrollToId("feedbackSec");
+  }
+</script>
+
+{% endblock %}
