@@ -5,11 +5,13 @@
 <section class="hero">
   <div class="container hero-grid">
     <div class="animate-fade-in-up">
-      <h1 class="h1">Real-time FSL Learning with AI-Powered Feedback</h1>
+      <h1 class="h1">Real-time FSL Recognition with Interactive Feedback</h1>
       <p class="muted">
-        Experience revolutionary Filipino Sign Language learning with our advanced LSTM-based recognition system.
-        Get <strong>instant visual feedback</strong>, <strong>corrective guidance</strong>, and
-        <strong>progressive skill development</strong> through our intelligent learning platform.
+        Learn Filipino Sign Language through an LSTM-based system 
+        that recognizes your gestures and gives real-time feedback. 
+        Watch <strong>demonstration videos</strong>, receive <strong>corrective guidance</strong>, 
+        and <strong>improve your sign language</strong> 
+        with every practice — all in one interactive learning platform.
       </p>
 
       <!-- Feature highlights -->
@@ -24,38 +26,21 @@
         </div>
         <div class="flex" style="align-items:center;gap:0.5rem;">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
-          <span style="font-size:0.875rem;color:var(--ink);">Progress Tracking</span>
+          <span style="font-size:0.875rem;color:var(--ink);">Performance Feedback</span>
         </div>
       </div>
 
       <div class="flex" style="margin-top:2.5rem;gap:1rem;flex-wrap:wrap;justify-content:center;">
-        <a class="btn btn-pill btn-large" href="{{ url_for('detect') }}" style="font-size:1.125rem;padding:1rem 2rem;">🚀 Start Learning</a>
+        {% if session.get('authenticated') %}
+          <a class="btn btn-pill btn-large" href="{{ url_for('tutor') }}" style="font-size:1.125rem;padding:1rem 2rem;">Start Learning</a>
+        {% else %}
+          <a class="btn btn-pill btn-large" href="{{ url_for('login') }}" style="font-size:1.125rem;padding:1rem 2rem;">Start Learning</a>
+        {% endif %}
         <a class="btn btn-outline" href="{{ url_for('about') }}">Learn More</a>
       </div>
     </div>
 
-    <div class="card animate-fade-in-up animate-delay-2">
-      <div style="font-weight:700;margin-bottom:1.5rem;color:var(--ink);font-size:1.125rem;text-align:center;">Live Learning Preview</div>
 
-      <!-- Enhanced Feature Grid -->
-      <div class="grid" style="grid-template-columns: repeat(2, 1fr);gap:1rem;margin-bottom:2rem;">
-        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--primary), var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
-          🤟 Gesture<br>Detection
-        </div>
-        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--secondary), var(--secondary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
-          📹 Real-time<br>Analysis
-        </div>
-        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--accent), var(--accent-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
-          ✅ Accuracy<br>Scoring
-        </div>
-        <div class="card" style="height:80px;background:linear-gradient(135deg, var(--neutral-600), var(--neutral-800));display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.75rem;text-align:center;">
-          🎯 Corrective<br>Guidance
-        </div>
-      </div>
-
-      <div class="text-center">
-        <div class="pill success animate-pulse">● AI Processing Active</div>
-      </div>
     </div>
   </div>
 </section>
@@ -85,8 +70,8 @@
 
       <div class="card animate-fade-in-up text-center" style="animation-delay:0.2s;">
         <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg, var(--accent), var(--accent-light));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2rem;color:white;">📈</div>
-        <h3 style="font-weight:800;font-size:1.25rem;color:var(--ink);margin-bottom:1rem;">Progress Analytics</h3>
-        <p class="muted">Comprehensive tracking and analytics help you understand your learning journey and identify areas for improvement.</p>
+        <h3 style="font-weight:800;font-size:1.25rem;color:var(--ink);margin-bottom:1rem;">Performance Feedback</h3>
+        <p class="muted">Real-time evaluation and corrective insights help you improve your sign language accuracy and enhance your learning progress.</p>
       </div>
     </div>
   </div>

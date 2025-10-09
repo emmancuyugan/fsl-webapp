@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Progress Results - FSL Learning Platform{% endblock %}
+{% block content %}
+
+<!-- Enhanced Header Section -->
+<section class="section animate-fade-in-up">
+  <div class="container text-center">
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">📈 Progress Results</h1>
+    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
+      Track your Filipino Sign Language learning journey and view detailed performance analytics
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <!-- RESULTS PANEL -->
+    <div class="card animate-fade-in-up">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📊 Learning Analytics</h2>
+        <span class="pill success">View Results</span>
+      </div>
+      <p class="muted" style="margin-bottom:2rem;">Monitor your progress, view detailed statistics, and track improvements over time.</p>
+
+
+
+      <!-- Assessment History -->
+      <div class="card" style="margin-bottom:2rem;">
+        <h3 style="color:var(--warning);margin-bottom:1rem;">📝 Assessment History</h3>
+        <div id="assessmentHistory" style="max-height:200px;overflow-y:auto;">
+          <div style="text-align:center;padding:2rem;color:var(--neutral-500);">
+            No assessments completed yet
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Sessions -->
+      <div class="card">
+        <h3 style="color:var(--secondary);margin-bottom:1rem;">🕐 Recent Sessions</h3>
+        <div id="recentSessions" style="max-height:300px;overflow-y:auto;">
+          <div style="text-align:center;padding:2rem;color:var(--neutral-500);">
+            No recent sessions available
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="section" style="background:var(--neutral-50);">
+  <div class="container text-center">
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to Practice More?</h2>
+    <div class="animate-fade-in-up animate-delay-1">
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
+      <a class="btn btn-outline" href="{{ url_for('activity') }}" style="background:var(--accent);color:white;border-color:var(--accent);">🎯 Practice Now</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Load user progress data
+  async function loadProgressData(){
+    try {
+      // Load assessment results from localStorage
+      const assessmentResults = JSON.parse(localStorage.getItem('fslAssessmentResults') || '[]');
+
+      // Calculate statistics from assessment data
+      let totalAssessments = assessmentResults.length;
+      let totalCorrect = 0;
+      let totalQuestions = 0;
+
+      assessmentResults.forEach(assessment => {
+        totalQuestions += assessment.totalQuestions || 5;
+        assessment.results.forEach(result => {
+          if (result.correct) totalCorrect++;
+        });
+      });
+
+      const avgAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+
+
+      // Update assessment history
+      const assessmentContainer = document.getElementById('assessmentHistory');
+      assessmentContainer.innerHTML = '';
+
+      if (assessmentResults.length === 0) {
+        assessmentContainer.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--neutral-500);">No assessments completed yet</div>';
+      } else {
+        assessmentResults.slice(-5).reverse().forEach((assessment, index) => {
+          const assessmentDiv = document.createElement('div');
+          assessmentDiv.style.cssText = `
+            display:flex;justify-content:space-between;align-items:center;padding:1rem;
+            border-bottom:1px solid var(--neutral-200);margin-bottom:0.5rem;
+          `;
+
+          const date = new Date(assessment.date).toLocaleDateString();
+          const correctAnswers = assessment.results.filter(r => r.correct).length;
+          const totalAnswers = assessment.results.length;
+          const score = Math.round((correctAnswers / totalAnswers) * 100);
+
+          assessmentDiv.innerHTML = `
+            <div>
+              <div style="font-weight:600;">Assessment #${assessmentResults.length - index}</div>
+              <div style="font-size:0.75rem;color:var(--neutral-500);">${date} • ${totalAnswers} questions</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:600;color:var(--primary);">${score}% Score</div>
+            </div>
+          `;
+
+          assessmentContainer.appendChild(assessmentDiv);
+        });
+      }
+
+      // Sample recent sessions (in real app, this would also come from backend)
+      const sampleSessions = [
+        { date: '2024-01-15', phrase: 'good morning', accuracy: 85, status: 'correct' },
+        { date: '2024-01-15', phrase: 'thank you', accuracy: 72, status: 'incorrect' },
+        { date: '2024-01-14', phrase: 'hello', accuracy: 90, status: 'correct' }
+      ];
+
+
+
+      // Update recent sessions
+      const sessionsContainer = document.getElementById('recentSessions');
+      sessionsContainer.innerHTML = '';
+
+      sampleSessions.forEach(session => {
+        const sessionDiv = document.createElement('div');
+        sessionDiv.style.cssText = `
+          display:flex;justify-content:space-between;align-items:center;padding:1rem;
+          border-bottom:1px solid var(--neutral-200);margin-bottom:0.5rem;
+        `;
+
+        const statusColor = session.status === 'correct' ? 'var(--success)' : 'var(--error)';
+        const statusIcon = session.status === 'correct' ? '✅' : '❌';
+
+        sessionDiv.innerHTML = `
+          <div>
+            <div style="font-weight:600;">${session.phrase.charAt(0).toUpperCase() + session.phrase.slice(1)}</div>
+            <div style="font-size:0.75rem;color:var(--neutral-500);">${session.date}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:600;color:${statusColor};">${statusIcon} ${session.accuracy}%</div>
+          </div>
+        `;
+
+        sessionsContainer.appendChild(sessionDiv);
+      });
+
+    } catch (error) {
+      console.error('Error loading progress data:', error);
+    }
+  }
+
+
+
+  // Load data when page loads
+  document.addEventListener('DOMContentLoaded', loadProgressData);
+</script>
+
+{% endblock %}

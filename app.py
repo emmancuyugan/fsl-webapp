@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from backend import (
     SUPPORTED_PHRASES,
     random_phrase,
@@ -6,8 +6,77 @@ from backend import (
     teaching_for,
     recognize_attempt_stub,
 )
+import os
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)  # uses templates/ and static/ by default
+app = Flask(__name__)
+
+# PostgreSQL connection URI format:
+# postgresql://username:password@host:port/databasename
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://fsl_admin:admin123@localhost:5432/fsl_database'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    progress = db.Column(db.Float, default=0.0)
+app.secret_key = os.urandom(24)  # Required for session management
+
+# User management functions using database
+def register_user(username, password, email):
+    """Register a new user in database"""
+    # Check if user already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return False, "Username already exists"
+
+    existing_email = User.query.filter_by(email=email).first()
+    if existing_email:
+        return False, "Email already registered"
+
+    # Create new user (in production, hash the password)
+    new_user = User(
+        username=username,
+        email=email,
+        progress=0.0
+    )
+    # Store password in a new field (in production, hash this)
+    new_user.password = password
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return True, "Registration successful"
+    except Exception as e:
+        db.session.rollback()
+        return False, f"Registration failed: {str(e)}"
+
+def authenticate_user(username, password):
+    """Authenticate a user from database"""
+    # Check demo admin account
+    if username == "admin" and password == "fsl2024":
+        return True
+
+    # Check database users
+    user = User.query.filter_by(username=username).first()
+    if user and user.password == password:
+        return True
+
+    return False
+
+# Authentication decorator - must be defined before routes that use it
+def login_required(f):
+    def decorated_function(*args, **kwargs):
+        if not session.get("authenticated"):
+            flash("Please login to access this page", "warning")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    decorated_function.__name__ = f.__name__
+    return decorated_function
 
 @app.route("/")
 def home():
@@ -18,16 +87,80 @@ def detect():
     return render_template("detect.html")
 
 @app.route("/tutor")
+@login_required
 def tutor():
     return render_template("tutor.html")
-
-@app.route("/activity")
-def activity():
-    return render_template("activity.html")
 
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if authenticate_user(username, password):
+            session["user"] = username
+            session["authenticated"] = True
+            flash("Login successful!", "success")
+            return redirect(url_for("home"))
+        else:
+            flash("Invalid username or password", "error")
+
+    return render_template("login.html")
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        email = request.form.get("email")
+        confirm_password = request.form.get("confirm_password")
+
+        # Validation
+        if not all([username, password, email, confirm_password]):
+            flash("All fields are required", "error")
+        elif password != confirm_password:
+            flash("Passwords do not match", "error")
+        elif len(password) < 6:
+            flash("Password must be at least 6 characters long", "error")
+        elif len(username) < 3:
+            flash("Username must be at least 3 characters long", "error")
+        elif "@" not in email:
+            flash("Please enter a valid email address", "error")
+        else:
+            success, message = register_user(username, password, email)
+            if success:
+                flash("Registration successful! Please login with your credentials.", "success")
+                return redirect(url_for("login"))
+            else:
+                flash(message, "error")
+
+    return render_template("signup.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been logged out", "info")
+    return redirect(url_for("home"))
+
+# Protect sensitive routes
+@app.route("/activity")
+@login_required
+def activity():
+    return render_template("activity.html")
+
+@app.route("/assessment")
+@login_required
+def assessment():
+    return render_template("assessment.html")
+
+@app.route("/results")
+@login_required
+def results():
+    return render_template("results.html")
 
 # ---------- APIs ----------
 

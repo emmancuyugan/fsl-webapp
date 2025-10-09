@@ -113,7 +113,7 @@ def evaluate_attempt(target: str, attempt: str):
     hints = []
     if not correct:
         hints += [
-            "Slow slightly and keep hands centered in frame.",
+            "Slow down movement and keep hands centered in frame.",
             "Hold each sign for a brief moment before moving.",
         ]
 

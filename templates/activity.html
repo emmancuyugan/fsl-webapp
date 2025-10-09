@@ -5,7 +5,7 @@
 <!-- Enhanced Header Section -->
 <section class="section animate-fade-in-up">
   <div class="container text-center">
-    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Activity Mode</h1>
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Practice Mode</h1>
     <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
       Practice Filipino Sign Language with AI-powered feedback and real-time evaluation
     </p>
@@ -17,40 +17,50 @@
     <!-- ACTIVITY PANEL -->
     <div class="card animate-fade-in-up">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🎯 Practice & Evaluate</h2>
-        <button class="btn animate-smooth-gradient" id="nextChallenge" style="background-size:200% 200%;">🎲 New Challenge</button>
+        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🧩 Practice & Evaluate</h2>
+        <span class="pill success">Auto-Random Phrases</span>
       </div>
-      <p class="muted" style="margin-bottom:2rem;">Practice signing the phrase shown below using your camera, then get AI-powered feedback and guidance.</p>
+      <p class="muted" style="margin-bottom:2rem;">Practice signing the phrase shown below using your camera, or upload a video if you don't have camera access, then get AI-powered feedback and guidance.</p>
 
-      <div class="card animate-subtle-pulse" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;text-align:center;padding:2rem;">
-        <div style="font-size:0.875rem;color:white;">Target Phrase:</div>
-        <div style="font-size:1.5rem;font-weight:900;color:white;" id="targetPhrase">Loading...</div>
+      <div class="card" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;text-align:center;padding:1.25rem;">
+        <div style="font-size:0.75rem;color:white;">Target Phrase:</div>
+        <div style="font-size:1.25rem;font-weight:900;color:white;" id="targetPhrase">Loading...</div>
       </div>
 
-      <div class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;">
+      <!-- Mode Selection -->
+      <div style="margin-top:1.5rem;margin-bottom:1rem;">
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+          <button id="cameraMode" class="btn" style="background:var(--primary);flex:1;">📹 Camera Mode</button>
+          <button id="uploadMode" class="btn btn-outline" style="flex:1;">📁 Upload Video</button>
+        </div>
+      </div>
+
+      <!-- Camera Mode -->
+      <div id="cameraSection" class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;" onmouseover="this.style.transform='none'">
         <video id="cam" autoplay muted playsinline></video>
         <span class="badge">📹 Live Camera</span>
+      </div>
+
+      <!-- Upload Mode -->
+      <div id="uploadSection" class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;display:none;" onmouseover="this.style.transform='none'">
+        <video id="uploadedVideo" controls></video>
+        <span class="badge">📁 Uploaded Video</span>
+        <div style="margin-top:1rem;">
+          <input type="file" id="videoUpload" accept="video/*" style="margin-bottom:1rem;">
+          <button id="processUpload" class="btn" style="background:var(--secondary);width:100%;">Process Uploaded Video</button>
+        </div>
       </div>
 
       <!-- Activity Controls -->
       <div class="activity-controls animate-fade-in-up" style="margin-top:1.5rem;">
         <div style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
-          <button id="startCam" class="btn" style="background:var(--primary);flex:1;">🎥 Start Camera</button>
-          <button id="startRec" class="btn" style="background:var(--secondary);flex:1;">▶️ Start Recording</button>
+          <button id="startCam" class="btn" style="background:var(--primary);flex:1;">Start Camera</button>
+          <button id="startRec" class="btn" style="background:var(--secondary);flex:1;">Start Recording</button>
         </div>
-        <button id="stopRec" class="btn btn-large" style="background:var(--accent);width:100%;font-size:1.1rem;padding:1rem;">⏹️ Stop & Evaluate</button>
+        <button id="stopRec" class="btn btn-large" style="background:var(--accent);width:100%;font-size:1.1rem;padding:1rem;">Stop & Evaluate</button>
       </div>
 
-      <details class="animate-fade-in-up" style="margin-top:1.5rem;">
-        <summary class="muted" style="cursor:pointer;padding:0.75rem;background:var(--neutral-50);border-radius:var(--radius);">
-          🤔 No camera? Try manual input (Demo Mode)
-        </summary>
-        <div class="grid grid-3 animate-fade-in-down" style="margin-top:1rem;gap:0.75rem;">
-          <select id="attemptPick" style="padding:0.75rem;border-radius:var(--radius);border:2px solid var(--neutral-200);"></select>
-          <input id="attemptManual" placeholder="Type your attempt..." style="padding:0.75rem;border-radius:var(--radius);border:2px solid var(--neutral-200);" />
-          <button class="btn" id="assessManual" style="background:var(--neutral-700);">✨ Assess</button>
-        </div>
-      </details>
+
     </div>
   </div>
 </section>
@@ -64,7 +74,7 @@
         <h2 style="margin:0;color:var(--accent);font-size:1.75rem;">📊 Performance Feedback</h2>
       </div>
 
-      <div id="feedbackBox" class="feedback animate-subtle-pulse" style="display:none;margin-bottom:2rem;"></div>
+      <div id="feedbackBox" class="feedback" style="display:none;margin-bottom:2rem;"></div>
 
       <div id="reteach" class="animate-fade-in-up" style="display:none;">
         <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
@@ -74,7 +84,7 @@
 
         <div class="video-wrap animate-fade-in-left">
           <video id="reteachVideo" controls></video>
-          <span class="badge success animate-pulse">✅ Correct Technique</span>
+          <span class="badge success">✅ Correct Technique</span>
         </div>
 
         <div style="background:var(--success);background:linear-gradient(135deg, var(--success), var(--secondary-light));color:white;padding:1.5rem;border-radius:var(--radius-lg);margin-top:1.5rem;">
@@ -89,10 +99,10 @@
 <!-- Progress Section -->
 <section class="section" style="background:var(--neutral-50);">
   <div class="container text-center">
-    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">🚀 Ready for More?</h2>
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to Test Your Learnings?</h2>
     <div class="animate-fade-in-up animate-delay-1">
-      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);">← Back to Home</a>
-      <a class="btn btn-outline" href="{{ url_for('tutor') }}" style="background:var(--secondary);color:white;border-color:var(--secondary);">📚 Try Tutor Mode</a>
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
+      <a class="btn btn-outline" href="{{ url_for('assessment') }}" style="background:var(--secondary);color:white;border-color:var(--secondary);">Try Assessment Mode -></a>
     </div>
   </div>
 </section>
@@ -116,6 +126,8 @@
   let mediaStream = null;
   let frames = [];
   let target = "";
+  let currentMode = "camera"; // "camera" or "upload"
+  let uploadedVideoFile = null;
 
   // init
   fetch("/api/phrases").then(r=>r.json()).then(d=>{
@@ -127,13 +139,92 @@
     });
   });
 
-  // random challenge
-  document.getElementById("nextChallenge").onclick = async ()=>{
+  // load random phrase
+  async function loadRandomPhrase(){
     const p = await fetch("/api/random").then(r=>r.json()).then(d=>d.phrase);
     target = p; targetEl.textContent = p;
-  };
+  }
+
   // set an initial challenge
-  document.getElementById("nextChallenge").click();
+  loadRandomPhrase();
+
+  // auto-load new phrases every 45 seconds
+  setInterval(loadRandomPhrase, 45000);
+
+  // Mode switching functionality
+  const cameraModeBtn = document.getElementById("cameraMode");
+  const uploadModeBtn = document.getElementById("uploadMode");
+  const cameraSection = document.getElementById("cameraSection");
+  const uploadSection = document.getElementById("uploadSection");
+  const videoUpload = document.getElementById("videoUpload");
+  const processUploadBtn = document.getElementById("processUpload");
+
+  // Mode switching
+  cameraModeBtn.onclick = () => {
+    currentMode = "camera";
+    cameraSection.style.display = "block";
+    uploadSection.style.display = "none";
+    cameraModeBtn.className = "btn";
+    cameraModeBtn.style.background = "var(--primary)";
+    uploadModeBtn.className = "btn btn-outline";
+    uploadModeBtn.style.background = "transparent";
+  };
+
+  uploadModeBtn.onclick = () => {
+    currentMode = "upload";
+    cameraSection.style.display = "none";
+    uploadSection.style.display = "block";
+    uploadModeBtn.className = "btn";
+    uploadModeBtn.style.background = "var(--primary)";
+    cameraModeBtn.className = "btn btn-outline";
+    cameraModeBtn.style.background = "transparent";
+  };
+
+  // Video upload handling
+  videoUpload.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      uploadedVideoFile = file;
+      const url = URL.createObjectURL(file);
+      document.getElementById("uploadedVideo").src = url;
+    }
+  };
+
+  // Process uploaded video
+  processUploadBtn.onclick = () => {
+    if (!uploadedVideoFile) {
+      alert("Please select a video file first.");
+      return;
+    }
+    extractFramesFromVideo(uploadedVideoFile);
+  };
+
+  // Extract frames from uploaded video
+  function extractFramesFromVideo(file) {
+    frames = [];
+    const video = document.getElementById("uploadedVideo");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = 320;
+    canvas.height = 180;
+
+    video.currentTime = 0;
+
+    const extractFrame = () => {
+      if (video.currentTime < video.duration && frames.length < 8) {
+        ctx.drawImage(video, 0, 0, 320, 180);
+        frames.push(canvas.toDataURL("image/jpeg", 0.6));
+        video.currentTime += 0.2; // Extract frame every 0.2 seconds
+        setTimeout(extractFrame, 100);
+      } else {
+        alert(`Extracted ${frames.length} frames from video. Click "Stop & Evaluate" to get feedback.`);
+      }
+    };
+
+    video.onloadedmetadata = () => {
+      extractFrame();
+    };
+  }
 
   // camera
   startCamBtn.onclick = async ()=>{
@@ -186,11 +277,11 @@
     feedbackBox.style.display = "block";
     if(res.correct){
       feedbackBox.className = "feedback success";
-      feedbackBox.innerHTML = `✅ <b>Correct!</b> Score: <span class="kpi">${(res.score*100).toFixed(0)}%</span>`;
+      feedbackBox.innerHTML = `✅ <b>Correct!</b>`;
       reteach.style.display = "none";
     }else{
       feedbackBox.className = "feedback danger";
-      feedbackBox.innerHTML = `❌ <b>Incorrect.</b> Target: <b>${res.target}</b> — Score: <span class="kpi">${(res.score*100).toFixed(0)}%</span><br>${(res.hints||[]).join(" ")}`;
+      feedbackBox.innerHTML = `❌ <b>Incorrect.</b> Target: <b>${res.target}</b><br>${(res.hints||[]).join(" ")}`;
       // show teaching for the right sign
       reteach.style.display = "block";
       reteachVideo.src = (res.teach && res.teach.video) || "/static/video/sample.mp4";

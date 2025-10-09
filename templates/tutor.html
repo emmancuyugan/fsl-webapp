@@ -5,7 +5,7 @@
 <!-- Enhanced Header Section -->
 <section class="section animate-fade-in-up">
   <div class="container text-center">
-    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">📚 Tutor Mode</h1>
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Tutor Mode</h1>
     <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
       Learn Filipino Sign Language step-by-step with detailed video tutorials and guided instructions
     </p>
@@ -18,13 +18,13 @@
     <div class="card animate-fade-in-up">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
         <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📚 Learn Step-by-Step</h2>
-        <span class="pill success animate-subtle-pulse">Guided Learning</span>
+        <span class="pill success">Guided Learning</span>
       </div>
       <p class="muted" style="margin-bottom:2rem;">Choose a phrase to learn. Watch the video tutorial and follow the detailed steps.</p>
 
       <div id="phraseButtons" class="grid grid-3" style="gap:0.75rem;margin-bottom:2rem;"></div>
 
-      <div class="video-wrap animate-fade-in-up" style="margin-bottom:1.5rem;">
+      <div class="video-wrap animate-fade-in-up" style="margin-bottom:1.5rem;" onmouseover="this.style.transform='none'">
         <video id="teachVideo" controls poster="{{ url_for('static', filename='img/logo.jpg') }}"></video>
         <span class="badge">📖 Tutorial Video</span>
       </div>
@@ -40,10 +40,10 @@
 <!-- Progress Section -->
 <section class="section" style="background:var(--neutral-50);">
   <div class="container text-center">
-    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">🚀 Ready to Practice?</h2>
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to Practice?</h2>
     <div class="animate-fade-in-up animate-delay-1">
-      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);">← Back to Home</a>
-      <a class="btn btn-outline" href="{{ url_for('activity') }}" style="background:var(--accent);color:white;border-color:var(--accent);">🎯 Try Activity Mode</a>
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
+      <a class="btn btn-outline" href="{{ url_for('activity') }}" style="background:var(--accent);color:white;border-color:var(--accent);">Try Tutorial -></a>
     </div>
   </div>
 </section>

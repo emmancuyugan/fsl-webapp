@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+{% block title %}Assessment Mode - FSL Learning Platform{% endblock %}
+{% block content %}
+
+<!-- Enhanced Header Section -->
+<section class="section animate-fade-in-up" style="padding:40px 0;">
+  <div class="container text-center">
+    <h1 style="font-size:2.5rem;font-weight:900;margin-bottom:0.75rem;color:var(--ink);">📝 Assessment Mode</h1>
+    <p class="muted" style="font-size:1.1rem;max-width:70ch;margin:0 auto;">
+      Test your Filipino Sign Language skills with timed assessments. Results are recorded for progress tracking.
+    </p>
+  </div>
+</section>
+
+<section class="section" style="padding:40px 0;">
+  <div class="container">
+    <!-- ASSESSMENT PANEL -->
+    <div class="card animate-fade-in-up" style="padding:1.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h2 style="margin:0;color:var(--primary);font-size:1.25rem;">🎯 Skills Assessment</h2>
+        <span class="pill warning">Timed Test</span>
+      </div>
+      <p class="muted" style="margin-bottom:1.5rem;font-size:0.9rem;">Complete the assessment to measure your progress. Results will be saved to your progress dashboard.</p>
+
+      <!-- Phrase Preview -->
+      <div id="phrasePreview" class="card" style="background:linear-gradient(135deg, var(--primary), var(--primary-light));color:white;padding:1rem;margin-bottom:1rem;animation:none !important;transition:none !important;">
+        <h4 style="margin:0 0 0.75rem 0;color:white;font-size:1rem;">📋 Assessment Phrases</h4>
+        <div id="previewPhrases" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:0.5rem;animation:none !important;transition:none !important;">
+          <!-- Phrases will be loaded here -->
+        </div>
+      </div>
+
+
+
+      <!-- Timer Display -->
+      <div id="timerSection" style="display:none;text-align:center;margin-bottom:1rem;">
+        <div style="font-size:2.5rem;font-weight:900;color:var(--primary);" id="timer">00:00</div>
+        <div style="font-size:0.8rem;color:var(--neutral-600);">Time Remaining</div>
+      </div>
+
+      <div class="video-wrap animate-fade-in-up" style="margin-bottom:1rem;" onmouseover="this.style.transform='none'">
+        <video id="cam" autoplay muted playsinline></video>
+        <span class="badge">📹 Live Camera</span>
+      </div>
+
+      <!-- Assessment Controls -->
+      <div class="activity-controls animate-fade-in-up" style="margin-bottom:1rem;">
+        <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+          <button id="startCamera" class="btn" style="background:#2563eb;flex:1;padding:0.75rem;">📷 Start Camera</button>
+          <button id="startRecording" class="btn" style="background:#10b981;flex:1;padding:0.75rem;display:none;">🎥 Start Recording</button>
+        </div>
+        <button id="stopEvaluate" class="btn btn-large" style="background:#f59e0b;width:100%;font-size:1rem;padding:0.75rem;display:none;">⏹️ Stop & Evaluate</button>
+      </div>
+
+      <!-- Assessment Progress -->
+      <div id="progressSection" style="display:none;margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
+          <span style="font-size:0.8rem;color:var(--neutral-600);">Progress</span>
+          <span style="font-size:0.8rem;color:var(--primary);" id="progressText">0/5 completed</span>
+        </div>
+        <div style="width:100%;height:6px;background:var(--neutral-200);border-radius:3px;overflow:hidden;">
+          <div id="progressBar" style="height:100%;width:0%;background:var(--primary);transition:width 0.3s ease;"></div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+<!-- Video Upload Section -->
+<section class="section" style="padding:40px 0;background:var(--neutral-50);">
+  <div class="container">
+    <div class="card animate-fade-in-up" style="padding:1.5rem;">
+      <h3 style="margin:0 0 1rem 0;color:var(--primary);font-size:1.25rem;">📤 Upload Assessment Video</h3>
+      <p class="muted" style="margin-bottom:1.5rem;font-size:0.9rem;">Upload a pre-recorded video for assessment instead of using live camera.</p>
+
+      <div style="margin-bottom:1rem;">
+        <input type="file" id="assessmentVideoUpload" accept="video/*" style="display:none;">
+        <button onclick="document.getElementById('assessmentVideoUpload').click()" class="btn" style="background:#6b7280;width:100%;padding:0.75rem;margin-bottom:0.5rem;">📁 Select Video File</button>
+        <div id="fileName" style="font-size:0.8rem;color:var(--neutral-600);margin-bottom:1rem;min-height:1.2rem;"></div>
+        <button id="processAssessmentUpload" class="btn" style="background:#8b5cf6;width:100%;padding:0.75rem;" disabled>Process Video</button>
+      </div>
+
+      <div style="font-size:0.8rem;color:var(--neutral-600);">
+        <p style="margin:0 0 0.5rem 0;"><strong>Supported formats:</strong> MP4, WebM, MOV</p>
+        <p style="margin:0;"><strong>Duration:</strong> Up to 3 minutes per phrase</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Progress Section -->
+<section class="section" style="background:var(--neutral-100);">
+  <div class="container text-center">
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">You’re Doing Great, Stay Consistent!</h2>
+    <div class="animate-fade-in-up animate-delay-1">
+      <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
+      <a class="btn btn-outline" href="{{ url_for('results') }}" style="background:var(--secondary);color:white;border-color:var(--secondary);">📊 View Results</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const cam = document.getElementById("cam");
+  const startCameraBtn = document.getElementById("startCamera");
+  const startRecordingBtn = document.getElementById("startRecording");
+  const stopEvaluateBtn = document.getElementById("stopEvaluate");
+
+  const attemptPick = document.getElementById("attemptPick");
+  const attemptManual = document.getElementById("attemptManual");
+  const assessManualBtn = document.getElementById("assessManual");
+
+  const timerSection = document.getElementById("timerSection");
+  const timer = document.getElementById("timer");
+  const progressSection = document.getElementById("progressSection");
+  const progressText = document.getElementById("progressText");
+  const progressBar = document.getElementById("progressBar");
+
+  let mediaStream = null;
+  let frames = [];
+  let currentPhrase = "";
+  let assessmentTimer = null;
+  let timeLeft = 150; // 30 seconds per phrase × 5 phrases = 150 seconds total
+  let currentPhraseIndex = 0;
+  let totalPhrases = 5;
+  let assessmentResults = [];
+  let assessmentPhrases = [];
+  let phraseTimer = null;
+  let phraseTimeLeft = 30; // 30 seconds per phrase
+  let uploadedAssessmentVideo = null;
+  let assessmentFrames = [];
+
+  // init
+  fetch("/api/phrases").then(r=>r.json()).then(d=>{
+    d.phrases.forEach(p=>{
+      const opt = document.createElement("option");
+      opt.value = p; opt.textContent = p;
+      attemptPick.appendChild(opt);
+    });
+  });
+
+  // Pre-load assessment phrases
+  async function loadAssessmentPhrases() {
+    const promises = [];
+    for(let i = 0; i < totalPhrases; i++) {
+      promises.push(fetch("/api/random").then(r=>r.json()).then(d=>d.phrase));
+    }
+
+    assessmentPhrases = await Promise.all(promises);
+
+    // Display phrases in preview
+    const previewContainer = document.getElementById('previewPhrases');
+    previewContainer.innerHTML = '';
+
+    assessmentPhrases.forEach((phrase, index) => {
+      const phraseDiv = document.createElement('div');
+      phraseDiv.style.cssText = `
+        background:rgba(255,255,255,0.2);padding:0.75rem;border-radius:var(--radius);
+        text-align:center;font-size:0.875rem;transform:none !important;transition:none !important;
+        animation:none !important;pointer-events:none;
+      `;
+      phraseDiv.onmouseover = function() { this.style.transform = 'none'; };
+      phraseDiv.onmouseout = function() { this.style.transform = 'none'; };
+
+      phraseDiv.innerHTML = `
+        <div style="font-weight:600;">${index + 1}. ${phrase.charAt(0).toUpperCase() + phrase.slice(1)}</div>
+        <div style="font-size:0.75rem;margin-top:0.25rem;color:#10b981;">30 seconds</div>
+      `;
+
+      previewContainer.appendChild(phraseDiv);
+    });
+  }
+
+  // Load phrases when page loads
+  document.addEventListener('DOMContentLoaded', loadAssessmentPhrases);
+
+  // Assessment video upload functionality
+  const assessmentVideoUpload = document.getElementById("assessmentVideoUpload");
+  const processAssessmentUploadBtn = document.getElementById("processAssessmentUpload");
+
+  // Handle video file selection
+  assessmentVideoUpload.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      uploadedAssessmentVideo = file;
+      processAssessmentUploadBtn.textContent = "Process Video";
+      processAssessmentUploadBtn.disabled = false;
+    }
+  };
+
+  // Process uploaded video for assessment
+  processAssessmentUploadBtn.onclick = () => {
+    if (!uploadedAssessmentVideo) {
+      alert("Please select a video file first.");
+      return;
+    }
+
+    // Extract frames from uploaded video
+    extractAssessmentFrames(uploadedAssessmentVideo);
+  };
+
+  // Extract frames from uploaded video for assessment
+  function extractAssessmentFrames(file) {
+    assessmentFrames = [];
+    const video = document.createElement("video");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = 320;
+    canvas.height = 180;
+
+    video.src = URL.createObjectURL(file);
+    video.currentTime = 0;
+
+    processAssessmentUploadBtn.textContent = "Processing...";
+    processAssessmentUploadBtn.disabled = true;
+
+    const extractFrame = () => {
+      if (video.currentTime < video.duration && assessmentFrames.length < 8) {
+        ctx.drawImage(video, 0, 0, 320, 180);
+        assessmentFrames.push(canvas.toDataURL("image/jpeg", 0.6));
+        video.currentTime += 0.2; // Extract frame every 0.2 seconds
+        setTimeout(extractFrame, 100);
+      } else {
+        processAssessmentUploadBtn.textContent = "Process Video";
+        processAssessmentUploadBtn.disabled = false;
+        alert(`Extracted ${assessmentFrames.length} frames from video. You can now proceed with the assessment using uploaded video.`);
+
+        // Copy frames to main frames array for assessment
+        frames = [...assessmentFrames];
+      }
+    };
+
+    video.onloadedmetadata = () => {
+      extractFrame();
+    };
+
+    video.onerror = () => {
+      processAssessmentUploadBtn.textContent = "Process Video";
+      processAssessmentUploadBtn.disabled = false;
+      alert("Error processing video. Please try a different file.");
+    };
+  }
+
+  // start camera
+  startCameraBtn.onclick = async ()=>{
+    try{
+      // Open camera
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+      cam.srcObject = mediaStream;
+
+      // Update button states - enable recording button
+      startCameraBtn.style.display = "none";
+      startRecordingBtn.style.display = "block";
+
+    }catch(e){
+      console.error('Camera error:', e);
+      alert("Could not access camera: " + e.message);
+    }
+  };
+
+  // start recording
+  startRecordingBtn.onclick = ()=>{
+    // Start recording frames
+    startRecording();
+
+    // Update button states
+    startRecordingBtn.style.display = "none";
+    stopEvaluateBtn.style.display = "block";
+  };
+
+  // stop and evaluate
+  stopEvaluateBtn.onclick = async ()=>{
+    if(!currentPhrase || frames.length === 0) return;
+
+    // Get AI assessment
+    const res = await fetch("/api/assess", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ target: currentPhrase, frames })
+    }).then(r=>r.json());
+
+    // Record result
+    assessmentResults.push({
+      phrase: currentPhrase,
+      correct: res.correct,
+      confidence: res.confidence || 0,
+      timestamp: new Date().toISOString()
+    });
+
+    if(currentPhraseIndex < totalPhrases){
+      loadNextPhrase();
+      // Reset button states for next phrase
+      stopEvaluateBtn.style.display = "none";
+      startCameraBtn.style.display = "block";
+    }else{
+      endAssessment();
+    }
+  };
+
+  // load next phrase
+  async function loadNextPhrase(){
+    if(currentPhraseIndex <= assessmentPhrases.length){
+      currentPhraseIndex++;
+      currentPhrase = assessmentPhrases[currentPhraseIndex - 1];
+
+      frames = [];
+
+      // Update progress
+      const progress = (currentPhraseIndex / totalPhrases) * 100;
+      progressText.textContent = `${currentPhraseIndex}/${totalPhrases} completed`;
+      progressBar.style.width = progress + "%";
+
+      if(currentPhraseIndex >= totalPhrases){
+        endAssessment();
+      } else {
+        // Start new phrase timer
+        startPhraseTimer();
+      }
+    }
+  }
+
+  // phrase timer - 30 seconds per phrase
+  function startPhraseTimer(){
+    if(phraseTimer) clearInterval(phraseTimer);
+
+    phraseTimeLeft = 30; // Reset to 30 seconds for each phrase
+
+    phraseTimer = setInterval(()=>{
+      phraseTimeLeft--;
+      const minutes = Math.floor(phraseTimeLeft / 60);
+      const seconds = phraseTimeLeft % 60;
+      timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      if(phraseTimeLeft <= 0){
+        // Auto-advance to next phrase
+        if(currentPhraseIndex < totalPhrases){
+          loadNextPhrase();
+          startPhraseTimer(); // Start timer for next phrase
+        } else {
+          endAssessment();
+        }
+      }
+    }, 1000);
+  }
+
+  // overall timer (backup)
+  function startTimer(){
+    assessmentTimer = setInterval(()=>{
+      timeLeft--;
+      if(timeLeft <= 0){
+        endAssessment();
+      }
+    }, 1000);
+  }
+
+  // record frames
+  function startRecording(){
+    frames = [];
+    if(!mediaStream) return;
+
+    const track = mediaStream.getVideoTracks()[0];
+    const imageCapture = new ImageCapture(track);
+    let count = 0;
+
+    const grab = async ()=>{
+      try{
+        const bmp = await imageCapture.grabFrame();
+        const canvas = document.createElement("canvas");
+        canvas.width = 320; canvas.height = 180;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(bmp, 0, 0, 320, 180);
+        frames.push(canvas.toDataURL("image/jpeg", 0.6));
+        count++;
+        if(count < 8) setTimeout(grab, 200);
+      }catch(e){ console.warn(e); }
+    };
+    grab();
+  }
+
+  // manual assess
+  assessManualBtn.onclick = async ()=>{
+    const attempt = attemptManual.value.trim() || attemptPick.value;
+    if(!attempt || !currentPhrase) return;
+
+    // Record result without showing feedback
+    assessmentResults.push({
+      phrase: currentPhrase,
+      attempt: attempt,
+      timestamp: new Date().toISOString()
+    });
+
+    if(currentPhraseIndex < totalPhrases){
+      loadNextPhrase();
+    }else{
+      endAssessment();
+    }
+  };
+
+  // submit assessment (camera version)
+  submitAssessmentBtn.onclick = async ()=>{
+    if(!currentPhrase || frames.length === 0) return;
+
+    // Get AI assessment
+    const res = await fetch("/api/assess", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ target: currentPhrase, frames })
+    }).then(r=>r.json());
+
+    // Record result
+    assessmentResults.push({
+      phrase: currentPhrase,
+      correct: res.correct,
+      confidence: res.confidence || 0,
+      timestamp: new Date().toISOString()
+    });
+
+    if(currentPhraseIndex < totalPhrases){
+      loadNextPhrase();
+    }else{
+      endAssessment();
+    }
+  };
+
+  // end assessment
+  async function endAssessment(){
+    clearInterval(phraseTimer);
+    clearInterval(assessmentTimer);
+
+    // Save results to localStorage (in real app, save to backend)
+    const existingResults = JSON.parse(localStorage.getItem('fslAssessmentResults') || '[]');
+    existingResults.push({
+      date: new Date().toISOString(),
+      results: assessmentResults,
+      totalPhrases: totalPhrases,
+      timeSpent: 150 - timeLeft
+    });
+    localStorage.setItem('fslAssessmentResults', JSON.stringify(existingResults));
+
+    // Hide all buttons and elements
+    startCameraBtn.style.display = "none";
+    startRecordingBtn.style.display = "none";
+    stopEvaluateBtn.style.display = "none";
+    timerSection.style.display = "none";
+    progressSection.style.display = "none";
+
+    setTimeout(()=>{
+      window.location.href = "{{ url_for('results') }}";
+    }, 2000);
+  }
+</script>
+
+{% endblock %}
