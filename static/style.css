@@ -47,9 +47,9 @@ html,body{
 header.navbar{
   position:sticky;top:0;z-index:1000;
   backdrop-filter:blur(20px);
-  background:rgba(0, 0, 0, 0.95);
-  border-bottom:1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:0 2px 10px rgba(0, 0, 0, 0.2);
+  background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-bottom:1px solid rgba(15, 23, 42, 0.3);
+  box-shadow:0 2px 10px rgba(0, 0, 0, 0.3);
 }
 .nav-inner{
   height:72px;
@@ -87,7 +87,7 @@ header.navbar{
 .tagline{
   font-size:0.875rem;
   margin-top:-2px;
-  color:rgba(255,255,255,0.8);
+  color:rgba(255, 255, 255, 0.8);
 }
 nav{
   display:flex;

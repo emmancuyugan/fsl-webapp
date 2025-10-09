@@ -16,7 +16,7 @@
     <div class="container nav-inner">
       <div class="brand">
         <div class="brand-logo" onmouseover="this.style.transform='none'">
-          <img src="{{ url_for('static', filename='img/LOGO2.jpg') }}" alt="FSL Learning AI Logo" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
+          <img src="{{ url_for('static', filename='img/logo4.png') }}" alt="FSL Learning AI Logo" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
         </div>
         <div>
           <div class="brand-title">FSL Learning AI</div>
@@ -27,8 +27,7 @@
         <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">HOME</a>
         {% if session.get('authenticated') %}
           <a href="{{ url_for('tutor') }}" class="{% if request.endpoint == 'tutor' %}active{% endif %}">LEARN</a>
-          <a href="{{ url_for('activity') }}" class="{% if request.endpoint == 'activity' %}active{% endif %}">PRACTICE</a>
-          <a href="{{ url_for('assessment') }}" class="{% if request.endpoint == 'assessment' %}active{% endif %}">ASSESS</a>
+          <a href="{{ url_for('activity') }}" class="{% if request.endpoint == 'activity' %}active{% endif %}">ACTIVITY</a>
           <a href="{{ url_for('results') }}" class="{% if request.endpoint == 'results' %}active{% endif %}">RESULTS</a>
         {% endif %}
         <a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">ABOUT</a>
@@ -58,8 +57,7 @@
             <a href="{{ url_for('home') }}" class="animate-fade-in-left">Home</a>
             {% if session.get('authenticated') %}
               <a href="{{ url_for('tutor') }}" class="animate-fade-in-right">Learn</a>
-              <a href="{{ url_for('activity') }}" class="animate-fade-in-up">Practice</a>
-              <a href="{{ url_for('assessment') }}" class="animate-fade-in-down">Assess</a>
+              <a href="{{ url_for('activity') }}" class="animate-fade-in-up">Activity</a>
               <a href="{{ url_for('results') }}" class="animate-fade-in-left">Results</a>
             {% endif %}
             <a href="{{ url_for('about') }}" class="animate-fade-in-right">About</a>

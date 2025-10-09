@@ -21,27 +21,21 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     progress = db.Column(db.Float, default=0.0)
 app.secret_key = os.urandom(24)  # Required for session management
 
 # User management functions using database
-def register_user(username, password, email):
+def register_user(username, password):
     """Register a new user in database"""
     # Check if user already exists
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         return False, "Username already exists"
 
-    existing_email = User.query.filter_by(email=email).first()
-    if existing_email:
-        return False, "Email already registered"
-
     # Create new user (in production, hash the password)
     new_user = User(
         username=username,
-        email=email,
         progress=0.0
     )
     # Store password in a new field (in production, hash this)
@@ -58,7 +52,7 @@ def register_user(username, password, email):
 def authenticate_user(username, password):
     """Authenticate a user from database"""
     # Check demo admin account
-    if username == "admin" and password == "fsl2024":
+    if username == "admin" and password == "fsl2025":
         return True
 
     # Check database users
@@ -116,11 +110,10 @@ def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        email = request.form.get("email")
         confirm_password = request.form.get("confirm_password")
 
         # Validation
-        if not all([username, password, email, confirm_password]):
+        if not all([username, password, confirm_password]):
             flash("All fields are required", "error")
         elif password != confirm_password:
             flash("Passwords do not match", "error")
@@ -128,10 +121,8 @@ def signup():
             flash("Password must be at least 6 characters long", "error")
         elif len(username) < 3:
             flash("Username must be at least 3 characters long", "error")
-        elif "@" not in email:
-            flash("Please enter a valid email address", "error")
         else:
-            success, message = register_user(username, password, email)
+            success, message = register_user(username, password)
             if success:
                 flash("Registration successful! Please login with your credentials.", "success")
                 return redirect(url_for("login"))
@@ -152,10 +143,7 @@ def logout():
 def activity():
     return render_template("activity.html")
 
-@app.route("/assessment")
-@login_required
-def assessment():
-    return render_template("assessment.html")
+
 
 @app.route("/results")
 @login_required

@@ -24,16 +24,6 @@
 
 
 
-      <!-- Assessment History -->
-      <div class="card" style="margin-bottom:2rem;">
-        <h3 style="color:var(--warning);margin-bottom:1rem;">📝 Assessment History</h3>
-        <div id="assessmentHistory" style="max-height:200px;overflow-y:auto;">
-          <div style="text-align:center;padding:2rem;color:var(--neutral-500);">
-            No assessments completed yet
-          </div>
-        </div>
-      </div>
-
       <!-- Recent Sessions -->
       <div class="card">
         <h3 style="color:var(--secondary);margin-bottom:1rem;">🕐 Recent Sessions</h3>
@@ -62,63 +52,46 @@
   // Load user progress data
   async function loadProgressData(){
     try {
-      // Load assessment results from localStorage
-      const assessmentResults = JSON.parse(localStorage.getItem('fslAssessmentResults') || '[]');
+      // Load practice session results from localStorage
+      const practiceSessions = JSON.parse(localStorage.getItem('fslPracticeSessions') || '[]');
 
-      // Calculate statistics from assessment data
-      let totalAssessments = assessmentResults.length;
+      // Calculate statistics from practice session data
+      let totalSessions = practiceSessions.length;
       let totalCorrect = 0;
-      let totalQuestions = 0;
+      let totalSessionsCount = 0;
 
-      assessmentResults.forEach(assessment => {
-        totalQuestions += assessment.totalQuestions || 5;
-        assessment.results.forEach(result => {
-          if (result.correct) totalCorrect++;
-        });
+      practiceSessions.forEach(session => {
+        totalSessionsCount++;
+        if (session.correct) totalCorrect++;
       });
 
-      const avgAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+      const avgAccuracy = totalSessionsCount > 0 ? Math.round((totalCorrect / totalSessionsCount) * 100) : 0;
 
 
 
-      // Update assessment history
-      const assessmentContainer = document.getElementById('assessmentHistory');
-      assessmentContainer.innerHTML = '';
+      // Practice History section is now handled by the Recent Sessions below
 
-      if (assessmentResults.length === 0) {
-        assessmentContainer.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--neutral-500);">No assessments completed yet</div>';
-      } else {
-        assessmentResults.slice(-5).reverse().forEach((assessment, index) => {
-          const assessmentDiv = document.createElement('div');
-          assessmentDiv.style.cssText = `
-            display:flex;justify-content:space-between;align-items:center;padding:1rem;
-            border-bottom:1px solid var(--neutral-200);margin-bottom:0.5rem;
-          `;
-
-          const date = new Date(assessment.date).toLocaleDateString();
-          const correctAnswers = assessment.results.filter(r => r.correct).length;
-          const totalAnswers = assessment.results.length;
-          const score = Math.round((correctAnswers / totalAnswers) * 100);
-
-          assessmentDiv.innerHTML = `
-            <div>
-              <div style="font-weight:600;">Assessment #${assessmentResults.length - index}</div>
-              <div style="font-size:0.75rem;color:var(--neutral-500);">${date} • ${totalAnswers} questions</div>
-            </div>
-            <div style="text-align:right;">
-              <div style="font-weight:600;color:var(--primary);">${score}% Score</div>
-            </div>
-          `;
-
-          assessmentContainer.appendChild(assessmentDiv);
-        });
-      }
-
-      // Sample recent sessions (in real app, this would also come from backend)
+      // Generate recent sessions with current dates (in real app, this would come from backend)
+      const currentDate = new Date();
       const sampleSessions = [
-        { date: '2024-01-15', phrase: 'good morning', accuracy: 85, status: 'correct' },
-        { date: '2024-01-15', phrase: 'thank you', accuracy: 72, status: 'incorrect' },
-        { date: '2024-01-14', phrase: 'hello', accuracy: 90, status: 'correct' }
+        {
+          date: new Date(currentDate.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          phrase: 'good morning',
+          accuracy: 85,
+          status: 'correct'
+        },
+        {
+          date: new Date(currentDate.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          phrase: 'thank you',
+          accuracy: 72,
+          status: 'incorrect'
+        },
+        {
+          date: new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          phrase: 'hello',
+          accuracy: 90,
+          status: 'correct'
+        }
       ];
 
 
@@ -127,28 +100,34 @@
       const sessionsContainer = document.getElementById('recentSessions');
       sessionsContainer.innerHTML = '';
 
-      sampleSessions.forEach(session => {
-        const sessionDiv = document.createElement('div');
-        sessionDiv.style.cssText = `
-          display:flex;justify-content:space-between;align-items:center;padding:1rem;
-          border-bottom:1px solid var(--neutral-200);margin-bottom:0.5rem;
-        `;
+      if (practiceSessions.length === 0) {
+        sessionsContainer.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--neutral-500);">No practice sessions yet</div>';
+      } else {
+        practiceSessions.slice(0, 10).forEach((session, index) => {
+          const sessionDiv = document.createElement('div');
+          sessionDiv.style.cssText = `
+            display:flex;justify-content:space-between;align-items:center;padding:1rem;
+            border-bottom:1px solid var(--neutral-200);margin-bottom:0.5rem;
+          `;
 
-        const statusColor = session.status === 'correct' ? 'var(--success)' : 'var(--error)';
-        const statusIcon = session.status === 'correct' ? '✅' : '❌';
+          const date = new Date(session.date).toLocaleDateString();
+          const statusColor = session.correct ? 'var(--success)' : 'var(--error)';
+          const statusIcon = session.correct ? '✅' : '❌';
+          const confidence = Math.round((session.confidence || 0) * 100);
 
-        sessionDiv.innerHTML = `
-          <div>
-            <div style="font-weight:600;">${session.phrase.charAt(0).toUpperCase() + session.phrase.slice(1)}</div>
-            <div style="font-size:0.75rem;color:var(--neutral-500);">${session.date}</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-weight:600;color:${statusColor};">${statusIcon} ${session.accuracy}%</div>
-          </div>
-        `;
+          sessionDiv.innerHTML = `
+            <div>
+              <div style="font-weight:600;">${session.phrase.charAt(0).toUpperCase() + session.phrase.slice(1)}</div>
+              <div style="font-size:0.75rem;color:var(--neutral-500);">${date} • ${session.mode} mode</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:600;color:${statusColor};">${statusIcon} ${confidence}%</div>
+            </div>
+          `;
 
-        sessionsContainer.appendChild(sessionDiv);
-      });
+          sessionsContainer.appendChild(sessionDiv);
+        });
+      }
 
     } catch (error) {
       console.error('Error loading progress data:', error);

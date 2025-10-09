@@ -5,7 +5,7 @@
 <!-- Enhanced Header Section -->
 <section class="section animate-fade-in-up">
   <div class="container text-center">
-    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Practice Mode</h1>
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Activity Mode</h1>
     <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
       Practice Filipino Sign Language with AI-powered feedback and real-time evaluation
     </p>
@@ -17,10 +17,10 @@
     <!-- ACTIVITY PANEL -->
     <div class="card animate-fade-in-up">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
-        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🧩 Practice & Evaluate</h2>
+        <h2 style="margin:0;color:var(--secondary);font-size:1.5rem;">🧩 Activity and Evaluation</h2>
         <span class="pill success">Auto-Random Phrases</span>
       </div>
-      <p class="muted" style="margin-bottom:2rem;">Practice signing the phrase shown below using your camera, or upload a video if you don't have camera access, then get AI-powered feedback and guidance.</p>
+      <p class="muted" style="margin-bottom:2rem;">Activity: Perform the sign shown below using your camera, or upload a video if your camera isn’t available. The system will then provide AI-powered feedback and guidance on your performance.</p>
 
       <div class="card" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;text-align:center;padding:1.25rem;">
         <div style="font-size:0.75rem;color:white;">Target Phrase:</div>
@@ -102,7 +102,7 @@
     <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to Test Your Learnings?</h2>
     <div class="animate-fade-in-up animate-delay-1">
       <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
-      <a class="btn btn-outline" href="{{ url_for('assessment') }}" style="background:var(--secondary);color:white;border-color:var(--secondary);">Try Assessment Mode -></a>
+      <a class="btn btn-outline" href="{{ url_for('results') }}" style="background:var(--accent);color:white;border-color:var(--accent);">View My Progress -></a>
     </div>
   </div>
 </section>
@@ -275,6 +275,10 @@
 
   function showFeedback(res){
     feedbackBox.style.display = "block";
+
+    // Record session data for results page
+    recordSessionData(target, res);
+
     if(res.correct){
       feedbackBox.className = "feedback success";
       feedbackBox.innerHTML = `✅ <b>Correct!</b>`;
@@ -292,6 +296,34 @@
       });
     }
     scrollToId("feedbackSec");
+  }
+
+  // Record session data for results tracking
+  function recordSessionData(targetPhrase, result) {
+    const sessionData = {
+      date: new Date().toISOString(),
+      phrase: targetPhrase,
+      correct: result.correct,
+      confidence: result.confidence || 0,
+      mode: currentMode,
+      timestamp: Date.now()
+    };
+
+    // Get existing sessions from localStorage
+    const existingSessions = JSON.parse(localStorage.getItem('fslPracticeSessions') || '[]');
+
+    // Add new session
+    existingSessions.unshift(sessionData);
+
+    // Keep only last 50 sessions
+    if (existingSessions.length > 50) {
+      existingSessions.splice(50);
+    }
+
+    // Save back to localStorage
+    localStorage.setItem('fslPracticeSessions', JSON.stringify(existingSessions));
+
+    console.log('Session recorded:', sessionData);
   }
 </script>
 
