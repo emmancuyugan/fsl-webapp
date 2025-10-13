@@ -76,9 +76,7 @@ def login_required(f):
 def home():
     return render_template("index.html")
 
-@app.route("/detect")
-def detect():
-    return render_template("detect.html")
+
 
 @app.route("/tutor")
 @login_required

@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Login - FSL Learning AI{% endblock %}
+{% block title %}Login - FSL Learning{% endblock %}
 
 {# Custom navigation for login page - only Home and Login #}
 <header class="navbar animate-fade-in-down">
   <div class="container nav-inner">
     <div class="brand">
       <div class="brand-logo" onmouseover="this.style.transform='none'">
-        <img src="{{ url_for('static', filename='img/logo4.png') }}" alt="FSL Learning AI Logo" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
+        <img src="{{ url_for('static', filename='img/logo4.png') }}" alt="FSL Learning Logo" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-lg);">
       </div>
       <div>
-        <div class="brand-title">FSL Learning AI</div>
+        <div class="brand-title">FSL Learning</div>
         <div class="tagline">AI-Powered Sign Language Education</div>
       </div>
     </div>
@@ -30,11 +30,11 @@
       <!-- Login Card -->
       <div class="card animate-fade-in-up" style="padding:3rem;text-align:center;border-radius:var(--radius-xl);">
         <div style="margin-bottom:2rem;">
-          <div style="width:80px;height:80px;margin:0 auto 1.5rem;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;color:white;">
-            <div class="arcticons--fossify-contacts" style="width:40px;height:40px;"></div>
+          <div style="width:80px;height:80px;margin:0 auto 1.5rem;border-radius:50%;background:#0975a9;display:flex;align-items:center;justify-content:center;color:white;">
+            <div class="solar--user-rounded-bold" style="width:40px;height:40px;"></div>
           </div>
           <h1 style="margin:0;color:var(--ink);font-size:2rem;font-weight:800;">Welcome Back</h1>
-          <p class="muted" style="margin-top:0.5rem;">Sign in to access FSL Learning AI</p>
+          <p class="muted" style="margin-top:0.5rem;">Sign in to access FSL Learning</p>
         </div>
 
         <!-- Flash Messages -->
@@ -75,15 +75,6 @@
           <a href="{{ url_for('signup') }}" style="color:var(--primary);text-decoration:none;font-weight:600;font-size:1rem;transition:color 0.2s ease;">
             Create Account
           </a>
-        </div>
-
-        <!-- Demo Credentials Info -->
-        <div class="animate-fade-in-up" style="margin-top:2rem;padding:1.5rem;background:var(--neutral-50);border-radius:var(--radius-lg);">
-          <h4 style="margin:0 0 1rem 0;color:var(--primary);font-size:0.9rem;">Demo Credentials</h4>
-          <div style="font-size:0.85rem;color:var(--neutral-600);text-align:left;">
-            <div style="margin-bottom:0.5rem;"><strong>Username:</strong> admin</div>
-            <div><strong>Password:</strong> fsl2025</div>
-          </div>
         </div>
 
         <!-- Back to Home -->

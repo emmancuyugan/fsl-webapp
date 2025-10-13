@@ -5,8 +5,9 @@
 <!-- Enhanced Header Section -->
 <section class="section animate-fade-in-up">
   <div class="container text-center">
-    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">🎯 Activity Mode</h1>
-    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
+    <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Activity Mode</h1>
+    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;color: var(--white);
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 1px 1px 3px rgba(0,0,0,0.9);">
       Practice Filipino Sign Language with AI-powered feedback and real-time evaluation
     </p>
   </div>
@@ -22,42 +23,118 @@
       </div>
       <p class="muted" style="margin-bottom:2rem;">Activity: Perform the sign shown below using your camera, or upload a video if your camera isn’t available. The system will then provide AI-powered feedback and guidance on your performance.</p>
 
-      <div class="card" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;text-align:center;padding:1.25rem;">
-        <div style="font-size:0.75rem;color:white;">Target Phrase:</div>
-        <div style="font-size:1.25rem;font-weight:900;color:white;" id="targetPhrase">Loading...</div>
-      </div>
-
-      <!-- Mode Selection -->
-      <div style="margin-top:1.5rem;margin-bottom:1rem;">
-        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
-          <button id="cameraMode" class="btn" style="background:var(--primary);flex:1;">📹 Camera Mode</button>
-          <button id="uploadMode" class="btn btn-outline" style="flex:1;">📁 Upload Video</button>
+      <!-- Target Phrase at the top -->
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div class="card" style="background:linear-gradient(135deg, var(--accent), var(--accent-light));color:white;padding:1rem;max-width:600px;margin:0 auto;text-align:center;">
+          <div style="font-size:0.7rem;color:white;opacity:0.9;text-align:center;">Target Phrase:</div>
+          <div style="font-size:1.3rem;font-weight:900;color:white;text-align:center;display:block;" id="targetPhrase">Loading...</div>
         </div>
       </div>
 
-      <!-- Camera Mode -->
-      <div id="cameraSection" class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;" onmouseover="this.style.transform='none'">
-        <video id="cam" autoplay muted playsinline></video>
-        <span class="badge">📹 Live Camera</span>
-      </div>
+      <!-- Camera Mode Only -->
 
-      <!-- Upload Mode -->
-      <div id="uploadSection" class="video-wrap animate-fade-in-up" style="margin-top:1.5rem;display:none;" onmouseover="this.style.transform='none'">
-        <video id="uploadedVideo" controls></video>
-        <span class="badge">📁 Uploaded Video</span>
-        <div style="margin-top:1rem;">
-          <input type="file" id="videoUpload" accept="video/*" style="margin-bottom:1rem;">
-          <button id="processUpload" class="btn" style="background:var(--secondary);width:100%;">Process Uploaded Video</button>
-        </div>
-      </div>
+      <!-- Dynamic Layout - Changes based on state -->
+      <div id="activityLayout" class="activity-layout" style="margin-top:2rem;">
 
-      <!-- Activity Controls -->
-      <div class="activity-controls animate-fade-in-up" style="margin-top:1.5rem;">
-        <div style="display:flex;gap:0.75rem;margin-bottom:0.75rem;">
-          <button id="startCam" class="btn" style="background:var(--primary);flex:1;">Start Camera</button>
-          <button id="startRec" class="btn" style="background:var(--secondary);flex:1;">Start Recording</button>
+        <!-- Recording State - Large Camera View -->
+        <div id="recordingView" class="recording-view" style="display:none;">
+          <div class="large-camera-container">
+            <!-- Large Camera Feed -->
+            <div class="video-wrap large-camera" style="position:relative;">
+              <video id="cam" autoplay muted playsinline style="max-height:500px; width: 100%;"></video>
+              <span class="badge">Your Attempt</span>
+
+              <!-- Real-time feedback overlay on camera -->
+              <div id="cameraFeedback" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;font-weight:900;color:white;text-shadow:2px 2px 4px rgba(0,0,0,0.8);display:none;"></div>
+
+              <!-- Next button overlay -->
+              <div id="nextButtonOverlay" style="position:absolute;bottom:20px;right:20px;display:none;">
+                <button id="nextPhraseBtn" class="btn" style="background:var(--success);font-size:1.1rem;padding:0.75rem 1.5rem;">🎉 Next Phrase</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button id="stopRec" class="btn btn-large" style="background:var(--accent);width:100%;font-size:1.1rem;padding:1rem;">Stop & Evaluate</button>
+
+        <!-- Split Screen State - Camera + Demo -->
+        <div id="splitView" class="split-view" style="display:none;">
+          <div style="display:flex;gap:2rem;">
+
+            <!-- Left Side - User's Camera -->
+            <div style="flex:1;text-align:center;">
+              <div class="video-wrap" style="margin-bottom:1rem;position:relative;">
+                <video id="camSplit" autoplay muted playsinline style="max-height:300px; width: 100%;"></video>
+                <span class="badge">Your Attempt</span>
+
+                <!-- Real-time feedback overlay -->
+                <div id="cameraFeedbackSplit" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;font-weight:900;color:white;text-shadow:2px 2px 4px rgba(0,0,0,0.8);display:none;"></div>
+              </div>
+            </div>
+
+            <!-- Right Side - Correct Demonstration -->
+            <div style="flex:1;text-align:center;position:relative;">
+              <div id="reteach" style="">
+                <div class="video-wrap" style="margin-bottom:1rem;position:relative;" id="correctDemoContainer">
+                  <video id="reteachVideo" controls autoplay muted style="max-height:300px; width: 100%; background: #000;" poster="{{ url_for('static', filename='img/logo.jpg') }}"></video>
+                  <div id="videoLoading" style="display:none; color: var(--primary); padding: 1rem; text-align: center; background: rgba(0,123,255,0.1); border-radius: 8px; margin: 0.5rem 0;">
+                    ⏳ Loading video...
+                  </div>
+                  <div id="videoError" style="display:none; color: var(--error); padding: 1rem; text-align: center; background: rgba(255,0,0,0.1); border-radius: 8px; margin: 0.5rem 0;">
+                    ❌ Video failed to load. Please check the file path.
+                  </div>
+                  <span class="badge success">Correct Demo</span>
+                  <div style="position:absolute;top:10px;right:10px;color:var(--success);font-weight:bold;font-size:0.75rem;">VID DEMO</div>
+                </div>
+                <h4 style="margin:0 0 1rem 0;color:#2d5a3d;">📝 Correct Steps:</h4>
+                <ol id="reteachSteps" style="margin:0;padding-left:1.5rem;"></ol>
+
+                <!-- Retry Button -->
+                <div style="margin-top:1.5rem;">
+                  <button id="retryPhraseBtn" class="btn" style="background:var(--secondary);margin-right:0.5rem;">🔄 Retry This Phrase</button>
+                  <button id="nextPhraseBtn" class="btn" style="background:var(--primary);">⏭️ Next Phrase</button>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Initial/Setup State - Normal Camera View -->
+        <div id="setupView" class="setup-view">
+          <div style="display:flex;gap:2rem;">
+
+            <!-- Left Side - User's Camera -->
+            <div style="flex:1;text-align:center;">
+              <div class="video-wrap" style="margin-bottom:1rem;position:relative;">
+                <video id="camSetup" autoplay muted playsinline style="max-height:300px;"></video>
+                <span class="badge">Your Camera</span>
+              </div>
+
+              <!-- Activity Controls -->
+              <div style="margin-top:1rem;">
+                <button id="startCam" class="btn" style="background:var(--primary);margin-right:0.5rem;">🎥 Start Camera</button>
+                <button id="stopCam" class="btn" style="background:var(--error);margin-right:0.5rem;display:none;">⏹️ Stop Camera</button>
+                <button id="startRec" class="btn" style="background:var(--secondary);margin-right:0.5rem;">⏺️ Record</button>
+                <button id="stopRec" class="btn" style="background:var(--accent);">✅ Evaluate</button>
+              </div>
+            </div>
+
+            <!-- Right Side - Instructions -->
+            <div style="flex:1;text-align:center;position:relative;">
+              <div class="info-panel" style="background:var(--neutral-50);padding:2rem;border-radius:var(--radius-lg);">
+                <h3 style="color:var(--primary);margin-bottom:1rem;">📋 How to Use</h3>
+                <ol style="text-align:left;margin:0 auto;max-width:400px;">
+                  <li style="margin-bottom:0.5rem;">Click "Start Camera" to begin</li>
+                  <li style="margin-bottom:0.5rem;">Click "Record" and perform the gesture</li>
+                  <li style="margin-bottom:0.5rem;">Wait 2-3 seconds for evaluation</li>
+                  <li style="margin-bottom:0.5rem;">Get real-time feedback</li>
+                  <li style="margin-bottom:0.5rem;">Watch correction videos if needed</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
 
@@ -65,41 +142,12 @@
   </div>
 </section>
 
-<!-- Enhanced Feedback Section -->
-<section class="section animate-fade-in-up" id="feedbackSec">
-  <div class="container">
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
-        <div style="width:16px;height:16px;border-radius:50%;background:var(--accent);"></div>
-        <h2 style="margin:0;color:var(--accent);font-size:1.75rem;">📊 Performance Feedback</h2>
-      </div>
-
-      <div id="feedbackBox" class="feedback" style="display:none;margin-bottom:2rem;"></div>
-
-      <div id="reteach" class="animate-fade-in-up" style="display:none;">
-        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-          <div style="width:12px;height:12px;border-radius:50%;background:var(--success);"></div>
-          <h3 style="margin:0;color:var(--success);">🎓 Learn the Correct Sign</h3>
-        </div>
-
-        <div class="video-wrap animate-fade-in-left">
-          <video id="reteachVideo" controls></video>
-          <span class="badge success">✅ Correct Technique</span>
-        </div>
-
-        <div style="background:var(--success);background:linear-gradient(135deg, var(--success), var(--secondary-light));color:white;padding:1.5rem;border-radius:var(--radius-lg);margin-top:1.5rem;">
-          <h4 style="margin-bottom:1rem;">📝 Correct Steps:</h4>
-          <ol id="reteachSteps" style="margin:0;padding-left:1.5rem;"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Note: Feedback section is now integrated into the split-screen layout above -->
 
 <!-- Progress Section -->
 <section class="section" style="background:var(--neutral-50);">
   <div class="container text-center">
-    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to Test Your Learnings?</h2>
+    <h2 class="animate-fade-in-up" style="color:var(--primary);margin-bottom:2rem;">Ready to See How Much You’ve Learned?</h2>
     <div class="animate-fade-in-up animate-delay-1">
       <a class="btn" href="{{ url_for('home') }}" style="margin-right:1rem;background:var(--primary);"> <- Back</a>
       <a class="btn btn-outline" href="{{ url_for('results') }}" style="background:var(--accent);color:white;border-color:var(--accent);">View My Progress -></a>
@@ -111,6 +159,7 @@
   const targetEl = document.getElementById("targetPhrase");
   const cam = document.getElementById("cam");
   const startCamBtn = document.getElementById("startCam");
+  const stopCamBtn = document.getElementById("stopCam");
   const startRecBtn = document.getElementById("startRec");
   const stopRecBtn = document.getElementById("stopRec");
 
@@ -122,12 +171,19 @@
   const reteach = document.getElementById("reteach");
   const reteachVideo = document.getElementById("reteachVideo");
   const reteachSteps = document.getElementById("reteachSteps");
+  const cameraFeedback = document.getElementById("cameraFeedback");
+  const nextButtonOverlay = document.getElementById("nextButtonOverlay");
+  const nextPhraseBtn = document.getElementById("nextPhraseBtn");
+  const retryPhraseBtn = document.getElementById("retryPhraseBtn");
+  const correctionSteps = document.getElementById("correctionSteps");
+  const videoLoading = document.getElementById("videoLoading");
+  const videoError = document.getElementById("videoError");
 
   let mediaStream = null;
   let frames = [];
   let target = "";
-  let currentMode = "camera"; // "camera" or "upload"
-  let uploadedVideoFile = null;
+  let isRecording = false;
+  let realTimeAnalysis = null;
 
   // init
   fetch("/api/phrases").then(r=>r.json()).then(d=>{
@@ -151,120 +207,505 @@
   // auto-load new phrases every 45 seconds
   setInterval(loadRandomPhrase, 45000);
 
-  // Mode switching functionality
-  const cameraModeBtn = document.getElementById("cameraMode");
-  const uploadModeBtn = document.getElementById("uploadMode");
-  const cameraSection = document.getElementById("cameraSection");
-  const uploadSection = document.getElementById("uploadSection");
-  const videoUpload = document.getElementById("videoUpload");
-  const processUploadBtn = document.getElementById("processUpload");
+  // Check camera permissions and browser compatibility on page load
+  console.log('🔍 Checking browser compatibility...');
 
-  // Mode switching
-  cameraModeBtn.onclick = () => {
-    currentMode = "camera";
-    cameraSection.style.display = "block";
-    uploadSection.style.display = "none";
-    cameraModeBtn.className = "btn";
-    cameraModeBtn.style.background = "var(--primary)";
-    uploadModeBtn.className = "btn btn-outline";
-    uploadModeBtn.style.background = "transparent";
-  };
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    console.error('❌ Camera API not supported in this browser');
+    alert('❌ Your browser does not support camera access. Please use Chrome, Firefox, Safari, or Edge.');
+  } else {
+    console.log('✅ Camera API is supported');
 
-  uploadModeBtn.onclick = () => {
-    currentMode = "upload";
-    cameraSection.style.display = "none";
-    uploadSection.style.display = "block";
-    uploadModeBtn.className = "btn";
-    uploadModeBtn.style.background = "var(--primary)";
-    cameraModeBtn.className = "btn btn-outline";
-    cameraModeBtn.style.background = "transparent";
-  };
-
-  // Video upload handling
-  videoUpload.onchange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      uploadedVideoFile = file;
-      const url = URL.createObjectURL(file);
-      document.getElementById("uploadedVideo").src = url;
+    // Check ImageCapture API support
+    if (!window.ImageCapture) {
+      console.warn('⚠️ ImageCapture API not supported. Frame capture may not work properly.');
+    } else {
+      console.log('✅ ImageCapture API is supported');
     }
-  };
 
-  // Process uploaded video
-  processUploadBtn.onclick = () => {
-    if (!uploadedVideoFile) {
-      alert("Please select a video file first.");
-      return;
-    }
-    extractFramesFromVideo(uploadedVideoFile);
-  };
-
-  // Extract frames from uploaded video
-  function extractFramesFromVideo(file) {
-    frames = [];
-    const video = document.getElementById("uploadedVideo");
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = 320;
-    canvas.height = 180;
-
-    video.currentTime = 0;
-
-    const extractFrame = () => {
-      if (video.currentTime < video.duration && frames.length < 8) {
-        ctx.drawImage(video, 0, 0, 320, 180);
-        frames.push(canvas.toDataURL("image/jpeg", 0.6));
-        video.currentTime += 0.2; // Extract frame every 0.2 seconds
-        setTimeout(extractFrame, 100);
-      } else {
-        alert(`Extracted ${frames.length} frames from video. Click "Stop & Evaluate" to get feedback.`);
-      }
-    };
-
-    video.onloadedmetadata = () => {
-      extractFrame();
-    };
+    // Check if we have camera permissions
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function(stream) {
+        // We have permissions, stop the test stream
+        stream.getTracks().forEach(track => track.stop());
+        console.log('✅ Camera permissions already granted');
+      })
+      .catch(function(err) {
+        console.log('⚠️ Camera permissions not granted or not available:', err.message);
+      });
   }
+
+  // Layout management functions
+  function showSetupView() {
+    document.getElementById("setupView").style.display = "block";
+    document.getElementById("recordingView").style.display = "none";
+    document.getElementById("splitView").style.display = "none";
+  }
+
+  function showRecordingView() {
+    document.getElementById("setupView").style.display = "none";
+    document.getElementById("recordingView").style.display = "block";
+    document.getElementById("splitView").style.display = "none";
+  }
+
+  function showSplitView() {
+    document.getElementById("setupView").style.display = "none";
+    document.getElementById("recordingView").style.display = "none";
+    document.getElementById("splitView").style.display = "block";
+  }
+
+  // Camera-only functionality
 
   // camera
   startCamBtn.onclick = async ()=>{
     try{
-      mediaStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
-      cam.srcObject = mediaStream;
+      // Check if camera is already active
+      if(mediaStream){
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+
+      // Request camera access
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: "user"
+        },
+        audio: false
+      });
+
+      // Connect camera to all video elements
+      const camElements = ['cam', 'camSetup', 'camSplit'];
+      camElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.srcObject = mediaStream;
+        }
+      });
+
+      // Show stop button, hide start button
+      startCamBtn.style.display = "none";
+      stopCamBtn.style.display = "inline-block";
+
+      console.log('Camera started successfully');
     }catch(e){
       console.error('Camera error:', e);
-      alert("Could not access camera: " + e.message);
+      alert("Could not access camera. Please make sure you have granted camera permissions and no other application is using the camera. Error: " + e.message);
     }
   };
 
-  // record
+  // stop camera
+  stopCamBtn.onclick = () => {
+    if(mediaStream){
+      mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+
+      // Disconnect from all camera elements
+      const camElements = ['cam', 'camSetup', 'camSplit'];
+      camElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.srcObject = null;
+        }
+      });
+
+      // Stop real-time analysis if running
+      if(realTimeAnalysis){
+        clearInterval(realTimeAnalysis);
+        realTimeAnalysis = null;
+      }
+
+      isRecording = false;
+
+      // Reset to setup view
+      showSetupView();
+
+      // Show start button, hide stop button
+      startCamBtn.style.display = "inline-block";
+      stopCamBtn.style.display = "none";
+
+      // Reset record button
+      startRecBtn.style.display = "inline-block";
+      stopRecBtn.textContent = "✅ Evaluate";
+      stopRecBtn.style.background = "var(--accent)";
+
+      // Hide any real-time feedback and overlays
+      hideRealTimeCorrection();
+      cameraFeedback.style.display = "none";
+      nextButtonOverlay.style.display = "none";
+
+      console.log('Camera stopped');
+    }
+  };
+
+  // record with real-time feedback
   startRecBtn.onclick = ()=>{
+    if(!mediaStream){
+      alert("❌ Start Camera first.");
+      return;
+    }
+
     frames = [];
-    if(!mediaStream){ alert("Start Camera first."); return; }
+    isRecording = true;
+
+    // Switch to large camera view for recording
+    showRecordingView();
+
+    // Update button states
+    startRecBtn.style.display = "none";
+    stopRecBtn.textContent = "⏸️ Stop Recording";
+    stopRecBtn.style.background = "var(--warning)";
+
     const track = mediaStream.getVideoTracks()[0];
-    const imageCapture = new ImageCapture(track);
-    let count = 0;
+
+    // Check if ImageCapture is supported
+    if (!window.ImageCapture) {
+      alert("❌ ImageCapture API not supported in this browser. Please use Chrome, Edge, or Opera.");
+      isRecording = false;
+      showSetupView();
+      startRecBtn.style.display = "inline-block";
+      stopRecBtn.textContent = "✅ Evaluate";
+      stopRecBtn.style.background = "var(--accent)";
+      return;
+    }
+
+    try {
+      const imageCapture = new ImageCapture(track);
+      console.log('✅ ImageCapture initialized successfully');
+    } catch(e) {
+      alert("❌ Failed to initialize frame capture. Error: " + e.message);
+      isRecording = false;
+      showSetupView();
+      startRecBtn.style.display = "inline-block";
+      stopRecBtn.textContent = "✅ Evaluate";
+      stopRecBtn.style.background = "var(--accent)";
+      return;
+    }
+
+    let frameCount = 0;
+
+    // Start real-time analysis (checks every second)
+    startRealTimeAnalysis(track);
+
+    // Capture frames for final evaluation (every 300ms)
     const grab = async ()=>{
       try{
+        if(!isRecording) return;
+
+        console.log(`🎬 Attempting to capture frame ${frameCount + 1}...`);
+
+        const imageCapture = new ImageCapture(track);
         const bmp = await imageCapture.grabFrame();
+
+        if (!bmp) {
+          throw new Error("Failed to grab frame from camera");
+        }
+
         const canvas = document.createElement("canvas");
         canvas.width = 320; canvas.height = 180;
         const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          throw new Error("Failed to get canvas context");
+        }
+
         ctx.drawImage(bmp, 0, 0, 320, 180);
-        frames.push(canvas.toDataURL("image/jpeg", 0.6));
-        count++;
-        if(count < 8) setTimeout(grab, 200);
-      }catch(e){ console.warn(e); }
+        const frameData = canvas.toDataURL("image/jpeg", 0.6);
+
+        if (frameData && frameData.length > 100) { // Basic check for valid frame data
+          frames.push(frameData);
+          frameCount++;
+          console.log(`✅ Successfully captured frame ${frameCount}/8 (${frames.length} total)`);
+        } else {
+          throw new Error("Invalid frame data captured");
+        }
+
+        if(frameCount < 8) {
+          setTimeout(grab, 300);
+        } else {
+          console.log('🎉 Frame capture completed - ready for evaluation!');
+        }
+      }catch(e){
+        console.warn(`⚠️ Frame capture error on frame ${frameCount + 1}:`, e.message);
+
+        // If we have at least some frames, continue trying
+        if(frames.length > 0 && frameCount < 8) {
+          console.log(`🔄 Retrying frame capture... (${frames.length} good frames so far)`);
+          setTimeout(grab, 500); // Slightly longer delay on retry
+        } else if(frameCount < 8) {
+          console.log(`⏳ Waiting before retry...`);
+          setTimeout(grab, 300);
+        }
+      }
     };
+
+    // Start capturing
+    console.log('🎥 Recording started!');
+    console.log('🎯 Perform your sign language gesture now');
+    console.log('⏱️ Record for 2-3 seconds, then click "Stop Recording"');
     grab();
   };
 
   // stop & evaluate
   stopRecBtn.onclick = async ()=>{
+    // Stop real-time analysis
+    if(realTimeAnalysis){
+      clearInterval(realTimeAnalysis);
+      realTimeAnalysis = null;
+    }
+
+    isRecording = false;
+
+    // If we don't have enough frames, use what we have (minimum 3 frames)
+    if(frames.length < 3){
+      alert("Need at least 3 frames for evaluation. Please record a bit longer.");
+      return;
+    }
+
     const body = { target, frames };
     const res = await fetch("/api/assess", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) }).then(r=>r.json());
+
+    // Handle layout based on results
+    if(res.correct) {
+      // User is correct - show large camera with NEXT button
+      showSetupView(); // Back to setup view but with feedback visible
+      showCameraCorrect();
+    } else {
+      // User is incorrect - show split screen with correction
+      showSplitView();
+      showRealTimeCorrection(res);
+    }
+
     showFeedback(res);
   };
+
+  // Real-time analysis function
+  function startRealTimeAnalysis(track) {
+    const imageCapture = new ImageCapture(track);
+    let consecutiveCorrect = 0;
+    let consecutiveIncorrect = 0;
+    const CORRECT_THRESHOLD = 2; // Show correct after 2 consecutive correct detections
+    const INCORRECT_THRESHOLD = 3; // Show correction after 3 consecutive incorrect detections
+
+    realTimeAnalysis = setInterval(async () => {
+      if(!isRecording) {
+        clearInterval(realTimeAnalysis);
+        return;
+      }
+
+      try {
+        const bmp = await imageCapture.grabFrame();
+        const canvas = document.createElement("canvas");
+        canvas.width = 320;
+        canvas.height = 180;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(bmp, 0, 0, 320, 180);
+
+        const frameData = canvas.toDataURL("image/jpeg", 0.6);
+
+        // Send frame for quick analysis
+        const response = await fetch("/api/assess", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ target, frames: [frameData] })
+        });
+
+        const result = await response.json();
+
+        if(result.correct) {
+          consecutiveCorrect++;
+          consecutiveIncorrect = 0;
+
+          // Show CORRECT on camera if consistently correct
+          if(consecutiveCorrect >= CORRECT_THRESHOLD) {
+            showCameraCorrect();
+          }
+        } else {
+          consecutiveCorrect = 0;
+          consecutiveIncorrect++;
+
+          // Show INCORRECT on camera if consistently incorrect
+          if(consecutiveIncorrect >= INCORRECT_THRESHOLD) {
+            showCameraIncorrect();
+            // Show correction video immediately during recording (split view)
+            showSplitView();
+            showRealTimeCorrection(result);
+          } else {
+            // Just show incorrect briefly
+            showCameraIncorrect();
+          }
+        }
+
+      } catch(e) {
+        console.warn('Real-time analysis error:', e);
+      }
+    }, 1000); // Analyze every second
+  }
+
+  // Show CORRECT on camera feed
+  function showCameraCorrect() {
+    cameraFeedback.textContent = "✅ CORRECT";
+    cameraFeedback.style.color = "var(--success)";
+    cameraFeedback.style.display = "block";
+
+    // Show next button
+    nextButtonOverlay.style.display = "block";
+
+    // Hide corrective feedback since user is doing it right
+    hideRealTimeCorrection();
+
+    console.log('Camera showing CORRECT');
+  }
+
+  // Show INCORRECT on camera feed
+  function showCameraIncorrect() {
+    cameraFeedback.textContent = "❌ INCORRECT";
+    cameraFeedback.style.color = "var(--error)";
+    cameraFeedback.style.display = "block";
+
+    // Hide next button
+    nextButtonOverlay.style.display = "none";
+
+    console.log('Camera showing INCORRECT');
+  }
+
+  // Retry phrase functionality (same phrase, different attempt)
+  retryPhraseBtn.onclick = () => {
+    console.log('🔄 Retrying phrase:', target);
+
+    // Hide camera feedback
+    cameraFeedback.style.display = "none";
+    nextButtonOverlay.style.display = "none";
+
+    // Reset to setup view but keep same phrase
+    showSetupView();
+
+    // Reset recording state
+    frames = [];
+    isRecording = false;
+
+    // Reset buttons
+    startRecBtn.style.display = "inline-block";
+    stopRecBtn.textContent = "✅ Evaluate";
+    stopRecBtn.style.background = "var(--accent)";
+
+    // Stop real-time analysis
+    if(realTimeAnalysis) {
+      clearInterval(realTimeAnalysis);
+      realTimeAnalysis = null;
+    }
+
+    // Hide any feedback
+    hideRealTimeCorrection();
+
+    console.log('Ready to retry phrase:', target);
+  };
+
+  // Next phrase functionality
+  nextPhraseBtn.onclick = () => {
+    // Hide camera feedback and next button
+    cameraFeedback.style.display = "none";
+    nextButtonOverlay.style.display = "none";
+
+    // Load new phrase
+    loadRandomPhrase();
+
+    // Reset to setup view
+    showSetupView();
+
+    // Reset recording state
+    frames = [];
+    isRecording = false;
+
+    // Reset buttons
+    startRecBtn.style.display = "inline-block";
+    stopRecBtn.textContent = "✅ Evaluate";
+    stopRecBtn.style.background = "var(--accent)";
+
+    // Stop real-time analysis
+    if(realTimeAnalysis) {
+      clearInterval(realTimeAnalysis);
+      realTimeAnalysis = null;
+    }
+
+    // Hide any feedback
+    hideRealTimeCorrection();
+
+    console.log('Loading next phrase');
+  };
+
+  // Show real-time correction
+  function showRealTimeCorrection(result) {
+    console.log('🎬 Showing real-time correction for:', result.target);
+    console.log('📹 Video path:', result.teach ? result.teach.video : 'No video path');
+
+    // Show the correct demo video
+    reteach.style.display = "block";
+
+    if(result.teach && result.teach.video) {
+      const videoPath = result.teach.video;
+      console.log('🎯 Setting video source to:', videoPath);
+
+      // Clear any existing error state
+      reteachVideo.style.display = "block";
+      document.getElementById("videoError").style.display = "none";
+
+      // Set video source and load
+      reteachVideo.src = videoPath;
+      reteachVideo.load();
+
+      // Add event listeners for debugging
+      reteachVideo.onloadedmetadata = function() {
+        console.log('✅ Video metadata loaded successfully');
+        console.log('📏 Video dimensions:', this.videoWidth + 'x' + this.videoHeight);
+        console.log('⏱️ Video duration:', this.duration, 'seconds');
+      };
+
+      reteachVideo.oncanplay = function() {
+        console.log('🎮 Video can start playing');
+      };
+
+      reteachVideo.onerror = function() {
+        console.error('❌ Video failed to load:', this.src);
+        console.error('🎬 Video error code:', this.error ? this.error.code : 'unknown');
+        console.error('🎬 Video error message:', this.error ? this.error.message : 'unknown');
+
+        // Show error message to user
+        reteachVideo.style.display = "none";
+        document.getElementById("videoError").style.display = "block";
+        document.getElementById("videoError").innerHTML = `
+          ❌ Video failed to load: ${videoPath}<br>
+          <small>Error: ${this.error ? this.error.message : 'Unknown error'}</small>
+        `;
+      };
+
+      reteachVideo.onloadeddata = function() {
+        console.log('📊 Video data loaded, ready to display');
+      };
+    } else {
+      console.warn('⚠️ No video path provided in result');
+      reteachVideo.style.display = "none";
+      document.getElementById("videoError").style.display = "block";
+      document.getElementById("videoError").innerHTML = "❌ No video available for this phrase.";
+    }
+
+    // Show correction steps in the new container
+    reteachSteps.innerHTML = "";
+    if(result.teach && result.teach.steps) {
+      result.teach.steps.forEach(s => {
+        const li = document.createElement("li");
+        li.textContent = s;
+        reteachSteps.appendChild(li);
+      });
+    }
+
+    console.log('✅ Real-time correction shown');
+  }
+
+  // Hide real-time correction
+  function hideRealTimeCorrection() {
+    reteach.style.display = "none";
+  }
 
   // manual assess
   assessManualBtn.onclick = async ()=>{
@@ -274,28 +715,23 @@
   };
 
   function showFeedback(res){
-    feedbackBox.style.display = "block";
-
     // Record session data for results page
     recordSessionData(target, res);
 
     if(res.correct){
-      feedbackBox.className = "feedback success";
-      feedbackBox.innerHTML = `✅ <b>Correct!</b>`;
+      alert(`✅ Correct! Well done!`);
       reteach.style.display = "none";
     }else{
-      feedbackBox.className = "feedback danger";
-      feedbackBox.innerHTML = `❌ <b>Incorrect.</b> Target: <b>${res.target}</b><br>${(res.hints||[]).join(" ")}`;
+      alert(`❌ Incorrect. Target: ${res.target}\n${(res.hints||[]).join(" ")}`);
       // show teaching for the right sign
       reteach.style.display = "block";
-      reteachVideo.src = (res.teach && res.teach.video) || "/static/video/sample.mp4";
+      reteachVideo.src = (res.teach && res.teach.video) || "";
       reteachVideo.load();
       reteachSteps.innerHTML = "";
       (res.teach && res.teach.steps || []).forEach(s=>{
         const li=document.createElement("li"); li.textContent = s; reteachSteps.appendChild(li);
       });
     }
-    scrollToId("feedbackSec");
   }
 
   // Record session data for results tracking
@@ -305,7 +741,7 @@
       phrase: targetPhrase,
       correct: result.correct,
       confidence: result.confidence || 0,
-      mode: currentMode,
+      mode: "camera",
       timestamp: Date.now()
     };
 

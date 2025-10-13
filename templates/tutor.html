@@ -6,7 +6,8 @@
 <section class="section animate-fade-in-up">
   <div class="container text-center">
     <h1 style="font-size:3rem;font-weight:900;margin-bottom:1rem;color:var(--ink);">Learning Mode</h1>
-    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;">
+    <p class="muted" style="font-size:1.25rem;max-width:80ch;margin:0 auto;color: var(--white);
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 1px 1px 3px rgba(0,0,0,0.9);">
       Learn Filipino Sign Language step-by-step with detailed video tutorials and guided instructions
     </p>
   </div>
@@ -18,7 +19,6 @@
     <div class="card animate-fade-in-up">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
         <h2 style="margin:0;color:var(--primary);font-size:1.5rem;">📚 Learn Step-by-Step</h2>
-        <span class="pill success">Guided Learning</span>
       </div>
       <p class="muted" style="margin-bottom:2rem;">Choose a phrase to learn. Watch the video tutorial and follow the detailed steps.</p>
 
@@ -70,7 +70,87 @@
   // tutor loader
   async function loadTeach(p){
     const res = await fetch(`/api/teach?phrase=${encodeURIComponent(p)}`).then(r=>r.json());
-    teachVideo.src = res.video;
+
+    // Special handling for hello phrase - randomize video selection
+    if(p.toLowerCase() === "hello") {
+      const helloVideos = [
+        "/static/video/hello/Hello.mp4",
+        "/static/video/hello/Hello1.mp4",
+        "/static/video/hello/Hello2.mp4",
+        "/static/video/hello/Hello3.mp4",
+        "/static/video/hello/Hello4.mp4",
+        "/static/video/hello/Hello5.mp4"
+      ];
+      const randomVideo = helloVideos[Math.floor(Math.random() * helloVideos.length)];
+      teachVideo.src = randomVideo;
+    }
+    // Special handling for good morning phrase - randomize video selection
+    else if(p.toLowerCase() === "good morning") {
+      const goodMorningVideos = [
+        "/static/video/goodmorning/goodmorning.mp4",
+        "/static/video/goodmorning/goodmorning1.mp4",
+        "/static/video/goodmorning/goodmorning2.mp4",
+        "/static/video/goodmorning/goodmorning3.mp4",
+        "/static/video/goodmorning/goodmorning4.mp4",
+        "/static/video/goodmorning/goodmorning5.mp4",
+        "/static/video/goodmorning/goodmorning6.mp4",
+        "/static/video/goodmorning/goodmorning7.mp4",
+        "/static/video/goodmorning/goodmorning8.mp4",
+        "/static/video/goodmorning/goodmorning9.mp4",
+        "/static/video/goodmorning/goodmorning10.mp4",
+        "/static/video/goodmorning/goodmorning11.mp4",
+        "/static/video/goodmorning/goodmorning12.mp4",
+        "/static/video/goodmorning/goodmorning13.mp4"
+      ];
+      const randomVideo = goodMorningVideos[Math.floor(Math.random() * goodMorningVideos.length)];
+      teachVideo.src = randomVideo;
+    }
+    // Special handling for don't understand phrase - randomize video selection
+    else if(p.toLowerCase() === "don't understand") {
+      const dontUnderstandVideos = [
+        "/static/video/dontunderstand/dont understand.mp4",
+        "/static/video/dontunderstand/dont uderstand1.mp4",
+        "/static/video/dontunderstand/dont understand2.mp4"
+      ];
+      const randomVideo = dontUnderstandVideos[Math.floor(Math.random() * dontUnderstandVideos.length)];
+      teachVideo.src = randomVideo;
+    }
+    // Special handling for good afternoon phrase - randomize video selection
+    else if(p.toLowerCase() === "good afternoon") {
+      const goodAfternoonVideos = [
+        "/static/video/goodafternoon/goodafternoon.mp4",
+        "/static/video/goodafternoon/goodafternoon1.mp4",
+        "/static/video/goodafternoon/goodafternoon2.mp4",
+        "/static/video/goodafternoon/goodafternoon3.mp4",
+        "/static/video/goodafternoon/goodafternoon4.mp4",
+        "/static/video/goodafternoon/goodafternoon5.mp4",
+        "/static/video/goodafternoon/goodafternoon6.mp4",
+        "/static/video/goodafternoon/goodafternoon7.mp4",
+        "/static/video/goodafternoon/goodafternoon8.mp4"
+      ];
+      const randomVideo = goodAfternoonVideos[Math.floor(Math.random() * goodAfternoonVideos.length)];
+      teachVideo.src = randomVideo;
+    }
+    // Special handling for good evening phrase - randomize video selection
+    else if(p.toLowerCase() === "good evening") {
+      const goodEveningVideos = [
+        "/static/video/goodevening/goodevening.mp4",
+        "/static/video/goodevening/goodevening1.mp4",
+        "/static/video/goodevening/goodevening2.mp4",
+        "/static/video/goodevening/goodevening3.mp4",
+        "/static/video/goodevening/goodevening4.mp4",
+        "/static/video/goodevening/goodevening5.mp4",
+        "/static/video/goodevening/goodevening6.mp4",
+        "/static/video/goodevening/goodevening7.mp4",
+        "/static/video/goodevening/goodevening9.mp4",
+        "/static/video/goodevening/goodevening10.mp4"
+      ];
+      const randomVideo = goodEveningVideos[Math.floor(Math.random() * goodEveningVideos.length)];
+      teachVideo.src = randomVideo;
+    } else {
+      teachVideo.src = res.video;
+    }
+
     teachVideo.load();
     teachSteps.innerHTML = "";
     (res.steps || []).forEach(s=>{

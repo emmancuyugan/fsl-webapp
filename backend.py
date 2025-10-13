@@ -3,9 +3,8 @@ import re
 
 # Focus phrases
 SUPPORTED_PHRASES = [
-    "see you tomorrow",
-    "nice to meet you",
-    "how are you",
+    "hello",
+    "don't understand",
     "good morning",
     "good evening",
     "good afternoon",
@@ -13,45 +12,37 @@ SUPPORTED_PHRASES = [
 
 # Optional per-phrase teaching resources (replace with real videos)
 TEACHING_MAP = {
-    "see you tomorrow": {
-        "video": "/static/video/see_you_tomorrow.mp4",
+    "hello": {
+        "video": "/static/video/hello/Hello.mp4",
         "steps": [
-            "Point to your eyes (SEE).",
-            "Gesture towards the other person (YOU).",
-            "Circle near temple/forward motion for TOMORROW."
+            "Open hand with fingers together.",
+            "Wave hand side to side in front of body.",
+            "Smile and maintain eye contact."
         ],
     },
-    "nice to meet you": {
-        "video": "/static/video/nice_to_meet_you.mp4",
+    "don't understand": {
+        "video": "/static/video/dontunderstand/dont understand.mp4",
         "steps": [
-            "Flat palm over other hand for NICE.",
-            "Index fingers meet together (MEET).",
-            "Point to the other person (YOU)."
-        ],
-    },
-    "how are you": {
-        "video": "/static/video/how_are_you.mp4",
-        "steps": [
-            "Rotate hands outward for HOW.",
-            "Point to person (YOU)."
+            "Shake head side to side (DON'T).",
+            "Shrug shoulders with palms up (UNDERSTAND)."
         ],
     },
     "good morning": {
-        "video": "/static/video/good_morning.mp4",
+        "video": "/static/video/goodmorning/goodmorning.mp4",
         "steps": [
             "Flat hand from mouth to palm (GOOD).",
             "Sun rising motion under arm (MORNING)."
         ],
     },
     "good evening": {
-        "video": "/static/video/good_evening.mp4",
+        "video": "/static/video/goodevening/goodevening.mp4",
         "steps": [
             "Flat hand from mouth to palm (GOOD).",
             "Sun setting motion (EVENING)."
         ],
     },
     "good afternoon": {
-        "video": "/static/video/good_afternoon.mp4",
+        "video": "/static/video/goodafternoon/goodafternoon.mp4",
         "steps": [
             "Flat hand from mouth to palm (GOOD).",
             "Sun overhead/forward tilt (AFTERNOON)."
@@ -62,7 +53,7 @@ TEACHING_MAP = {
 def teaching_for(phrase: str):
     phrase = (phrase or "").lower()
     default = {
-        "video": "/static/video/sample.mp4",
+        "video": "",
         "steps": [
             "Watch the instructional video carefully.",
             "Mimic the handshape and motion.",
