@@ -17,7 +17,8 @@ app = Flask(__name__)
 # ---------------------------------------------
 # Local fallback (127.0.0.1) for testing
 # When deployed, set BACKEND_URL in Render environment variables
-BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:5000")
+# BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:5000")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://fsl-webapp.onrender.com/")
 
 # ---------------------------------------------
 # Database Configuration (local use)
