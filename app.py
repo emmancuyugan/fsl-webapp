@@ -8,8 +8,6 @@ app = Flask(__name__)
 # BACKEND CONFIGURATION
 # =============================================
 # Local fallback (for testing) or Render backend URL
-# BACKEND_URL = os.getenv("BACKEND_URL", "https://your-backend-name.onrender.com")
-
 BACKEND_URL = os.getenv("BACKEND_URL", "https://your-backend-name.onrender.com")
 
 # Secret key for session management
@@ -148,5 +146,5 @@ def favicon():
 # =============================================
 if __name__ == "__main__":
     # Local frontend app (connects to Render backend)
-    print(f"🌐 Using backend at: {BACKEND_URL}")
+    print(f"Using backend at: {BACKEND_URL}")
     app.run(host="0.0.0.0", port=8000, debug=True)
