@@ -1,20 +1,30 @@
-# Python
+# Python cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite3
 
 # Virtual environments
 .venv/
 env/
 
-# IDE and misc
+# IDE files
 .idea/
 .vscode/
-*.log
 
-# OS
+# Environment variables
+.env
+*.env
+
+# Local databases
+*.sqlite
+*.db
+instance/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# OS system files
 .DS_Store
 Thumbs.db
