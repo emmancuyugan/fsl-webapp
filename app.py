@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import os
-import requests  # To communicate with the cloud backend
+import requests
 
 app = Flask(__name__)
 
 # =============================================
 # BACKEND CONFIGURATION
 # =============================================
-# Local fallback (for testing) or Render backend URL
 BACKEND_URL = os.getenv("BACKEND_URL", "https://your-backend-name.onrender.com")
 
 # Secret key for session management
