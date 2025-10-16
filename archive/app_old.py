@@ -8,7 +8,7 @@ app = Flask(__name__)
 # BACKEND CONFIGURATION
 # =============================================
 # BACKEND_URL = os.getenv("BACKEND_URL", "https://your-backend-name.onrender.com")
-BACKEND_URL = os.getenv("BACKEND_URL", "https://fsl-webapp-j.onrender.com")
+BACKEND_URL = os.getenv("BACKEND_URL", "https://your-backend-name.onrender.com")
 
 # Secret key for session management
 app.secret_key = os.urandom(24)
