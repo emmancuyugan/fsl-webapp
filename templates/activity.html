@@ -204,7 +204,7 @@
   // set an initial challenge
   loadRandomPhrase();
 
-  // auto-load new phrases every 45 seconds
+  // auto-load copy phrases every 45 seconds
   setInterval(loadRandomPhrase, 45000);
 
   // Check camera permissions and browser compatibility on page load
@@ -607,7 +607,7 @@
     cameraFeedback.style.display = "none";
     nextButtonOverlay.style.display = "none";
 
-    // Load new phrase
+    // Load copy phrase
     loadRandomPhrase();
 
     // Reset to setup view
@@ -689,7 +689,7 @@
       document.getElementById("videoError").innerHTML = "❌ No video available for this phrase.";
     }
 
-    // Show correction steps in the new container
+    // Show correction steps in the copy container
     reteachSteps.innerHTML = "";
     if(result.teach && result.teach.steps) {
       result.teach.steps.forEach(s => {
@@ -748,7 +748,7 @@
     // Get existing sessions from localStorage
     const existingSessions = JSON.parse(localStorage.getItem('fslPracticeSessions') || '[]');
 
-    // Add new session
+    // Add copy session
     existingSessions.unshift(sessionData);
 
     // Keep only last 50 sessions

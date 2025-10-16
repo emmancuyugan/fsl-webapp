@@ -1,6 +1,6 @@
 from app import app, db
 
-# Reset database with new schema (no email column)
+# Reset database with copy schema (no email column)
 with app.app_context():
     print("Resetting database to remove email column...")
 
@@ -12,10 +12,10 @@ with app.app_context():
     except Exception as e:
         print(f"✗ Error dropping table: {e}")
 
-    # Create all tables with new schema
+    # Create all tables with copy schema
     try:
         db.create_all()
-        print("✓ Database tables created successfully with new schema!")
+        print("✓ Database tables created successfully with copy schema!")
     except Exception as e:
         print(f"✗ Error creating tables: {e}")
 
