@@ -3,14 +3,22 @@ import re
 import torch
 import os
 
+# =============================================
+# CONFIGURATION SECTION
+# =============================================
 MODEL_TYPE = "lstm_gru"
 MODEL_FILE = "best_lstmgru_1.pth"
 
+# Model hyperparameters
 INPUT_SIZE = 128
 NUM_CLASSES = 5
 
+# Determine whether to use GPU (CUDA) or CPU for model computation
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# =============================================
+# MODEL SELECTION & LOADING
+# =============================================
 if MODEL_TYPE == "lstm_gru":
     from model_definition.lstm_gru_model import LSTMGRUHybrid
     model = LSTMGRUHybrid(INPUT_SIZE, NUM_CLASSES, dropout_p=0.20)
@@ -22,6 +30,7 @@ elif MODEL_TYPE == "modified_lstm":
 else:
     raise ValueError(f"Unknown MODEL_TYPE: {MODEL_TYPE}")
 
+# Load the trained weights (.pth file)
 model_path = os.path.join("models", MODEL_FILE)
 if os.path.exists(model_path):
     try:
@@ -34,6 +43,10 @@ if os.path.exists(model_path):
 else:
     print(f"Model file not found at {model_path}")
 
+
+# =============================================
+# PHRASES, TEACHING, & EVALUATION
+# =============================================
 SUPPORTED_PHRASES = [
     "hello",
     "don't understand",
@@ -146,6 +159,9 @@ def evaluate_attempt(target: str, attempt: str):
     }
 
 
+# =============================================
+# MODEL INFERENCE WRAPPER
+# =============================================
 def recognize_attempt(frames):
     """
     Predict the sign/phrase using the currently loaded model.
