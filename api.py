@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from logic import SUPPORTED_PHRASES, random_phrase, evaluate_attempt, teaching_for, recognize_attempt_stub
+from logic import SUPPORTED_PHRASES, random_phrase, evaluate_attempt, teaching_for, recognize_attempt
 import os
 
 app = Flask(__name__)
@@ -109,7 +109,7 @@ def api_assess():
     # Fallback: use stub recognizer if no attempt_text provided
     if not attempt_text:
         frames = data.get("frames") or []
-        attempt_text = recognize_attempt_stub(frames)
+        attempt_text = recognize_attempt(frames)
 
     result = evaluate_attempt(target, attempt_text)
     if not result["correct"]:
