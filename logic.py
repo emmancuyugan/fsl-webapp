@@ -1,52 +1,7 @@
 import random
 import re
-import torch
-import os
 
-# =============================================
-# CONFIGURATION SECTION
-# =============================================
-MODEL_TYPE = "lstm_gru"
-MODEL_FILE = "best_lstmgru_1.pth"
-
-# Model hyperparameters
-INPUT_SIZE = 128
-NUM_CLASSES = 5
-
-# Determine whether to use GPU (CUDA) or CPU for model computation
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# =============================================
-# MODEL SELECTION & LOADING
-# =============================================
-if MODEL_TYPE == "lstm_gru":
-    from model_definition.lstm_gru_model import LSTMGRUHybrid
-    model = LSTMGRUHybrid(INPUT_SIZE, NUM_CLASSES, dropout_p=0.20)
-elif MODEL_TYPE == "modified_lstm":
-    from model_definition.modified_lstm_model import ModifiedLSTM
-    model = ModifiedLSTM(input_size=INPUT_SIZE, hidden_size=256,
-                         num_layers=2, num_classes=NUM_CLASSES,
-                         dropout=0.30, use_layernorm=True)
-else:
-    raise ValueError(f"Unknown MODEL_TYPE: {MODEL_TYPE}")
-
-# Load the trained weights (.pth file)
-model_path = os.path.join("models", MODEL_FILE)
-if os.path.exists(model_path):
-    try:
-        model.load_state_dict(torch.load(model_path, map_location=device))
-        model.to(device)
-        model.eval()
-        print(f"Loaded {MODEL_TYPE} model from {MODEL_FILE}")
-    except Exception as e:
-        print(f"Failed to load model weights: {e}")
-else:
-    print(f"Model file not found at {model_path}")
-
-
-# =============================================
-# PHRASES, TEACHING, & EVALUATION
-# =============================================
+# Focus phrases
 SUPPORTED_PHRASES = [
     "hello",
     "don't understand",
@@ -55,6 +10,7 @@ SUPPORTED_PHRASES = [
     "good afternoon",
 ]
 
+# Optional per-phrase teaching resources (replace with real videos)
 TEACHING_MAP = {
     "hello": {
         "video": "/static/video/hello/Hello.mp4",
@@ -110,6 +66,8 @@ def teaching_for(phrase: str):
 def random_phrase():
     return random.choice(SUPPORTED_PHRASES)
 
+# ---------- Simple evaluation / correctness ----------
+
 def _tokens(s: str):
     return re.findall(r"[a-zA-Z]+", s.lower())
 
@@ -158,24 +116,15 @@ def evaluate_attempt(target: str, attempt: str):
         "hints": hints,
     }
 
-
-# =============================================
-# MODEL INFERENCE WRAPPER
-# =============================================
-def recognize_attempt(frames):
+# ---------- Stub recognizer ----------
+def recognize_attempt_stub(frames):
     """
-    Predict the sign/phrase using the currently loaded model.
+    Demo recognizer: pick a random phrase with a bias toward correctness
+    if many frames were provided. Replace with real model later.
     """
     if not frames:
         return random.choice(SUPPORTED_PHRASES)
-
-    # TODO: add the preprocessing logic here
-    # Example (pseudo):
-    # frames_tensor = preprocess_frames(frames).to(device)
-    # with torch.no_grad():
-    #     outputs = model(frames_tensor)
-    #     pred_idx = torch.argmax(outputs, dim=1).item()
-    # return SUPPORTED_PHRASES[pred_idx]
-
-    # Temporary placeholder until preprocessing is defined
+    # slightly bias: 60% chance to return the first word of a real phrase
+    if random.random() < 0.6:
+        return random.choice(SUPPORTED_PHRASES)
     return random.choice(SUPPORTED_PHRASES)
